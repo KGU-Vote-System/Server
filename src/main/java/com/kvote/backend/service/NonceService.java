@@ -1,4 +1,4 @@
-package com.kvote.backend;
+package com.kvote.backend.service;
 
 import org.springframework.stereotype.Service;
 
