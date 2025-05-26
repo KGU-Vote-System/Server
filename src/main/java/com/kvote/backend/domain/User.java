@@ -1,44 +1,81 @@
 package com.kvote.backend.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
 
-@Entity // JPA 엔티티로 지정
-@Getter // Getter만 사용, Setter는 최소화
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자는 JPA 전용으로 제한
+@Entity
+@Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true) // 지갑 주소는 유일해야 함
+    /** 실제 이름 */
+    @NotBlank
+    @Column(nullable = false)
+    private String name;
+
+    /*그 뭐시기 그 대학 전공 이름 -> 부전공도 있어야 하나 ? // 그리고 이걸 개별 String으로 받을지 아니면 좀 노가다로 경기대학교 학과를 전체 List업해서 넣을지 고민중*/
+    @NotBlank
+    @Column(nullable = false)
+    private String collegeMajorName;
+
+    /** 카카오 로그인용 이메일 */
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true)
+    private String kakaoEmail;
+
+    /** JWT Refresh Token (optional) */
+    @Column(length = 512)
+    private String refreshToken;
+
+    /** 사용자 역할 */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
+    /** 학생 인증 여부 */
+    @Column(nullable = false)
+    private boolean studentVerified;
+
+    /**
+     * 학생 인증용 이메일
+     * - 반드시 kyonggi.ac.kr 도메인
+     */
+    @NotBlank
+    @Email
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@kyonggi\\.ac\\.kr$",
+            message = "Kyonggi University 이메일(@kyonggi.ac.kr)만 허용됩니다."
+    )
+    @Column(nullable = false, unique = true)
+    private String studentEmail;
+
+    /** Klaytn 지갑 주소 */
+    @NotBlank
+    @Column(nullable = false, unique = true)
     private String walletAddress;
 
-    private String refreshToken; // refreshToken 저장용
+    /**
+     * Klaytn KAS Key ID
+     * (KAS 지갑 관리용 key identifier)
+     */
+    @Column(nullable = false)
+    private String keyId;
 
-    // 생성자: 필수값만 초기화
-    public User(String walletAddress) {
-        this.walletAddress = walletAddress;
-    }
-
-    // refreshToken 갱신을 위한 메서드
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
+    /**
+     * Klaytn Resource Name (KRN)
+     * (KAS 리소스 식별자)
+     */
+    @Column(nullable = false, unique = true)
+    private String krn;
 }
-/*
-AccessToken = 로그인 후 API 요청할 때 사용하는 짧은 유효기간을 가진 토큰임
-refreshToken = accessToken 만료 됐을때 새로 발급 받아야함
-
-AccessToken < refreshToken ( 기간으로 따졌을 때 )  ㅇㅇ
-
-accessToken은 유효시간 짧음 -> 서버에 저장 안 해도 됨 JWT니깐 유저정보 자체를 담고있어서 검증만 하면 됨
-refreshToken => 탈취 위험이 큼 -> 로그아웃 하면 폐기 처분 ? 같은 블랙리스트 처리 해줘야함
-Redis나 DB에 저장해서 관리 요망
-
-흐음 -> 쉽게 말하면
-accessToken은 사용자가 들고 댕기고 refreshToken은 서버가 검증용으로 저장함->그래서 User클래스에 refreshToken만 있는겁니당
- */
