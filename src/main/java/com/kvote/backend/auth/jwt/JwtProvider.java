@@ -50,7 +50,7 @@ public class JwtProvider {
         //AccessToken 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_VALIDITY);
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())         // payload "sub": "name"
+                .setSubject(authentication.getName())         // payload "sub": "email or kakaoId"
                 .claim(ROLES_CLAIM_KEY, authorities)          // payload "roles: "common"
                 .setExpiration(accessTokenExpiresIn)          // payload "exp": 151621022 (ex)
                 .signWith(key, SignatureAlgorithm.HS512)      // header  "alg": "HS512"
