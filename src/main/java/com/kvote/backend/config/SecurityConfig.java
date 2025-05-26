@@ -1,8 +1,5 @@
 package com.kvote.backend.config;
-import com.kvote.backend.auth.jwt.JwtAccessDeniedHandler;
-import com.kvote.backend.auth.jwt.JwtAuthenticationEntryPoint;
-import com.kvote.backend.auth.jwt.JwtFilter;
-import com.kvote.backend.auth.jwt.JwtProvider;
+import com.kvote.backend.auth.jwt.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(jwtProvider), SecurityContextHolderFilter.class);
+                .with(new JwtSecurityConfig(jwtProvider), jwtSecurityConfig -> {});
 
         return http.build();
 
