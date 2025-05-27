@@ -36,7 +36,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// Klaytn Caver Java SDK
-	implementation 'com.klaytn.caver:core:1.7.4' // 또는 최신 버전 확인 후 변경 가능
+	//implementation 'com.klaytn.caver:core:1.7.4' // 또는 최신 버전 확인 후 변경 가능
 
 	// MySQL or H2 or PostgreSQL 선택
 	runtimeOnly 'com.mysql:mysql-connector-j' // 실제 배포용 DB
@@ -48,6 +48,9 @@ dependencies {
 
 	// 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//스웨거
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {
