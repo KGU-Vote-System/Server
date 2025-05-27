@@ -1,58 +1,46 @@
 package com.kvote.backend.config;
-import com.kvote.backend.auth.jwt.*;
+
+import com.kvote.backend.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
-import org.springframework.web.filter.CorsFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+@Configuration
 @EnableWebSecurity
-@Configurable
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtProvider jwtProvider;
-    private final CorsFilter corsFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
 
-        http.csrf(csrf->csrf.disable())
-
-                .addFilterBefore(corsFilter, SecurityContextHolderFilter.class)
-
-                .exceptionHandling(ex-> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-                )
-                .headers(headers->headers
-                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
-                )
-
-                // 세션 stateless
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/login/**", "/oauth2/**", "/oauth-fail").permitAll()
                         .anyRequest().authenticated()
                 )
-                .with(new JwtSecurityConfig(jwtProvider), jwtSecurityConfig -> {});
+
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .defaultSuccessUrl("/api/user/welcome", true)
+
+                        // ⚠️ 오류 발생 시 재시도 막고 강제 리디렉션
+                        .failureHandler((request, response, exception) -> {
+                            System.err.println("OAuth 로그인 실패: " + exception.getMessage());
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.sendRedirect("/oauth-fail");  // 실패 페이지로 보내기
+                        })
+                );
 
         return http.build();
-
-
-
-
-
-
     }
-
-
 }
