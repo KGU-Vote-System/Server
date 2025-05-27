@@ -1,14 +1,10 @@
-# Start with a base image that includes OpenJDK
 FROM openjdk:21-jdk-slim
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the build artifact to the container
-COPY build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
+COPY . .
 
-# Expose the port that the app will run on
+RUN chmod +x gradlew
+RUN ./gradlew bootJar --no-daemon
+
 EXPOSE 8080
-
-# Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "build/libs/backend-0.0.1-SNAPSHOT.jar"]
