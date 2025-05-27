@@ -33,7 +33,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	// Redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// Klaytn Caver Java SDK
 	//implementation 'com.klaytn.caver:core:1.7.4' // 또는 최신 버전 확인 후 변경 가능
@@ -51,6 +51,16 @@ dependencies {
 
 	//스웨거
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    //Webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    //인가용
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    //env
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 }
 
 tasks.named('test') {
