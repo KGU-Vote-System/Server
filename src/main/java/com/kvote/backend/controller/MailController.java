@@ -19,8 +19,15 @@ public class MailController {
 
     // 인증 이메일 전송
     @PostMapping("/mailSend")
-    public HashMap<String, Object> mailSend(String mail) {
+    public ResponseEntity<?> mailSend(String mail) {
         HashMap<String, Object> map = new HashMap<>();
+
+        // 학교 이메일 형식 확인
+        if (!mail.endsWith("@kyonggi.ac.kr")) {
+            map.put("success", Boolean.FALSE);
+            map.put("error", "학교 이메일(@kyonggi.ac.kr)만 사용 가능합니다.");
+            return ResponseEntity.badRequest().body(map);
+        }
 
         try {
             number = mailService.sendMail(mail);
@@ -33,7 +40,7 @@ public class MailController {
             map.put("error", e.getMessage());
         }
 
-        return map;
+        return ResponseEntity.ok(map);
     }
 
     // 인증번호 일치여부 확인
