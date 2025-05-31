@@ -51,12 +51,12 @@ public class User {
      * 학생 인증용 이메일
      * - 반드시 kyonggi.ac.kr 도메인
      */
-//    @NotBlank
-//    @Email
-//    @Pattern(
-//            regexp = "^[A-Za-z0-9._%+-]+@kyonggi\\.ac\\.kr$",
-//            message = "Kyonggi University 이메일(@kyonggi.ac.kr)만 허용됩니다."
-//    )
+    @NotBlank
+    @Email
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@kyonggi\\.ac\\.kr$",
+            message = "Kyonggi University 이메일(@kyonggi.ac.kr)만 허용됩니다."
+    )
     @Column(nullable = false, unique = true)
     private String studentEmail;
 
