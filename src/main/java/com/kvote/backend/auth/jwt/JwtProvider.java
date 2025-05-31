@@ -1,6 +1,11 @@
 package com.kvote.backend.auth.jwt;
 
+import com.kvote.backend.auth.utils.UserDetailsImpl;
+import com.kvote.backend.domain.User;
 import com.kvote.backend.dto.TokenDto;
+import com.kvote.backend.global.exception.CheckmateException;
+import com.kvote.backend.global.exception.ErrorCode;
+import com.kvote.backend.repository.UserRepository;
 import io.jsonwebtoken.*;                // JJWT 라이브러리의 핵심 클래스들
 import io.jsonwebtoken.security.Keys;   // HMAC 키 생성 유틸
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.net.Authenticator;
@@ -31,12 +36,13 @@ public class JwtProvider {
 
     private final long ACCESS_TOKEN_VALIDITY;   // 15분(밀리초)
     private final long REFRESH_TOKEN_VALIDITY;  // 7일(밀리초)
+    private final UserRepository userRepository;
 
     public JwtProvider(
             @Value("${jwt.secret}") String secretKeyBase64,
             @Value("${jwt.access-token-validity}") long accessTokenValidity,
-            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity
-    ) {
+            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity,
+            UserRepository userRepository) {
         // 1) .env → JWT_SECRET(Base64) → decodedKey(바이트 배열)
         byte[] decodedKey = io.jsonwebtoken.io.Decoders.BASE64.decode(secretKeyBase64);
         // 2) HS512 알고리즘용 Key 객체 생성
@@ -45,6 +51,7 @@ public class JwtProvider {
         // 3) 만료 시간 주입
         this.ACCESS_TOKEN_VALIDITY = accessTokenValidity;
         this.REFRESH_TOKEN_VALIDITY = refreshTokenValidity;
+        this.userRepository = userRepository;
     }
     public TokenDto generateTokenDto(Authentication authentication){
         String authorities = authentication.getAuthorities().stream()
@@ -76,24 +83,36 @@ public class JwtProvider {
     }
 
     public Authentication getAuthentication(String accessToken){
-
-        //토큰 복호화
+//        //토큰 복호화
+//        Claims claims = parseClaims(accessToken);
+//
+//        if(claims.get(ROLES_CLAIM_KEY) == null){
+//            throw new RuntimeException("권한 정보가 없는 토큰입니다");
+//        }
+//
+//        //클레임에서 권한 정보 가져오기
+//        Collection<? extends GrantedAuthority> authorities =
+//                Arrays.stream(claims.get(ROLES_CLAIM_KEY).toString().split(","))
+//                        .map(SimpleGrantedAuthority::new)
+//                        .collect(Collectors.toList());
+//
+//        UserDetails principal = new User(claims.getSubject(), "", authorities);
+//
+//        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
         Claims claims = parseClaims(accessToken);
 
-        if(claims.get(ROLES_CLAIM_KEY) == null){
-            throw new RuntimeException("권한 정보가 없는 토큰입니다");
-        }
+        String email = claims.getSubject();
 
-        //클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(ROLES_CLAIM_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        User user = userRepository.findByKakaoEmail(email)
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.USER_NOT_FOUND));
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetailsImpl principal = new UserDetailsImpl(user);
 
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
-
+        return new UsernamePasswordAuthenticationToken(
+                principal,
+                null,
+                principal.getAuthorities()
+        );
     }
 
     public boolean validateToken(String token) {
