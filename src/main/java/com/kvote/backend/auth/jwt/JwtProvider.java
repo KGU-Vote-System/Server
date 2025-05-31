@@ -4,6 +4,7 @@ import com.kvote.backend.dto.TokenDto;
 import io.jsonwebtoken.*;                // JJWT 라이브러리의 핵심 클래스들
 import io.jsonwebtoken.security.Keys;   // HMAC 키 생성 유틸
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,23 +24,28 @@ import java.util.stream.Collectors;
 @Component
 public class JwtProvider {
 
-    //userrole 클레임 키
     public static final String ROLES_CLAIM_KEY = "roles";
-
     private static final String BEARER_TYPE = "Bearer";
 
-    // 비밀키 문자열 (실제 배포 시에는 절대로 코드에 하드코딩하지 말고 환경변수로 관리)
-    private static final String SECRET = "super-secret-key-super-secret-key";
+    private final Key key;
 
-    // 액세스토큰 만료 기간: 15분 (밀리초 단위)
-    private static final long ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000;
+    private final long ACCESS_TOKEN_VALIDITY;   // 15분(밀리초)
+    private final long REFRESH_TOKEN_VALIDITY;  // 7일(밀리초)
 
-    // 리프레시토큰 만료 기간: 7일
-    private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000;
+    public JwtProvider(
+            @Value("${jwt.secret}") String secretKeyBase64,
+            @Value("${jwt.access-token-validity}") long accessTokenValidity,
+            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity
+    ) {
+        // 1) .env → JWT_SECRET(Base64) → decodedKey(바이트 배열)
+        byte[] decodedKey = io.jsonwebtoken.io.Decoders.BASE64.decode(secretKeyBase64);
+        // 2) HS512 알고리즘용 Key 객체 생성
+        this.key = Keys.hmacShaKeyFor(decodedKey);
 
-    // HMAC-SHA256 알고리즘용 키 객체 생성
-    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
-
+        // 3) 만료 시간 주입
+        this.ACCESS_TOKEN_VALIDITY = accessTokenValidity;
+        this.REFRESH_TOKEN_VALIDITY = refreshTokenValidity;
+    }
     public TokenDto generateTokenDto(Authentication authentication){
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
