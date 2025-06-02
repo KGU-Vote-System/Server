@@ -64,6 +64,9 @@ dependencies {
 
 	// web3j for Ethereum/Kairos
 	implementation 'org.web3j:core:4.9.4'
+
+	//이메일 인증용
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {
