@@ -25,4 +25,8 @@ public class Candidate {
     public void updateVoteCount(Long voteCount) {
         this.voteCount = voteCount;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

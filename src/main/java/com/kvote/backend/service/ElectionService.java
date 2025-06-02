@@ -1,5 +1,6 @@
 package com.kvote.backend.service;
 
+
 import com.kvote.backend.contract.ElectionManager;
 import com.kvote.backend.domain.*;
 import com.kvote.backend.dto.CandidateResponseDto;
@@ -55,18 +56,12 @@ public class ElectionService {
         }
     }
 
-//    public Long getElectionVoteCount(BigInteger electionId) throws Exception {
-//
-//        long sum = 0L;
-//        List<Candidate> candidates = candidateRepository.findByElectionId(electionId.longValue());
-//
-//        for (Candidate candidate : candidates) {
-//            Tuple2<String, BigInteger> res = electionManager.getCandidate(electionId, BigInteger.valueOf(candidate.getId())).send();
-//            long voteCount = res.component2().longValue();
-//            sum += voteCount;
-//        }
-//        return sum;
-//    }
+    public Long getElectionVoteCount(BigInteger electionId, User user) throws Exception {
+        if (electionRepository.findById(electionId.longValue()).isEmpty()) {
+            throw CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND);
+        }
+        return electionManager.getTotalVotes(electionId).send().longValue();
+    }
 
     @Transactional
     public ElectionResponseDto createElection(ElectionRequestDto dto, User owner) throws Exception {
@@ -100,4 +95,49 @@ public class ElectionService {
         electionManager.endElection(electionId).send();
     }
 
+    public List<ElectionResponseDto> getAllElections(User user) {
+        List<Election> elections = electionRepository.findAll();
+        List<ElectionResponseDto> responseDtos = new ArrayList<>();
+        for (Election election : elections) {
+            responseDtos.add(electionToDto(election));
+        }
+        return responseDtos;
+    }
+
+    public ElectionResponseDto updateElection(Long electionId, ElectionRequestDto dto, User user) {
+        isAdmin(user);
+        Election election = electionRepository.findById(electionId)
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND));
+
+        // 선거가 활성화 상태가 아니면 수정 불가
+        if (!election.getIsActive()) {
+            throw CheckmateException.from(ErrorCode.ELECTION_NOT_ACTIVE);
+        }
+
+        // RDB 업데이트
+        election.update(dto);
+        Election updatedElection = electionRepository.save(election);
+        return electionToDto(updatedElection);
+    }
+
+    @Transactional
+    public void deleteElection(Long electionId, User user) {
+        isAdmin(user);
+        Election election = electionRepository.findById(electionId)
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND));
+
+        // 선거가 활성화 상태면 삭제 불가
+        if (election.getIsActive()) {
+            throw CheckmateException.from(ErrorCode.ELECTION_ACTIVE, "활성화된 선거는 삭제할 수 없습니다.");
+        }
+
+        // 블록체인에서 선거 삭제
+        try {
+            electionManager.deleteElection(BigInteger.valueOf(electionId)).send();
+        } catch (Exception e) {
+            throw CheckmateException.from(ErrorCode.ELECTION_DELETION_FAILED);
+        }
+        // RDB에서 삭제
+        electionRepository.delete(election);
+    }
 }

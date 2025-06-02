@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.User;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/elections")
@@ -39,14 +40,22 @@ public class ElectionController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/{electionId}/vote-count")
-//    @Operation(summary = "Get vote count for an election")
-//    @ResponseStatus(HttpStatus.OK)
-//    public ResponseEntity<String> getElectionVoteCount(@PathVariable BigInteger electionId,
-//                                                                    @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
-//        Long res = electionService.getElectionVoteCount(electionId);
-//        return ResponseEntity.ok("electionId: " + electionId + ", vote count: " + res);
-//    }
+    @GetMapping("/all")
+    @Operation(summary = "Get all elections")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<ElectionResponseDto>> getAllElections(@AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        List<ElectionResponseDto> elections = electionService.getAllElections(user.getUser());
+        return ResponseEntity.ok(elections);
+    }
+
+    @GetMapping("/{electionId}/total-vote-count")
+    @Operation(summary = "Get vote count for an election")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> getElectionVoteCount(@PathVariable BigInteger electionId,
+                                                       @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        Long res = electionService.getElectionVoteCount(electionId, user.getUser());
+        return ResponseEntity.ok("electionId: " + electionId + ", vote count: " + res);
+    }
 
     @PostMapping("/{electionId}/end")
     @Operation(summary = "End an election")
@@ -56,5 +65,24 @@ public class ElectionController {
 
         electionService.endElection(electionId, user.getUser());
         return ResponseEntity.ok("Election ended");
+    }
+
+    @PutMapping("/{electionId}")
+    @Operation(summary = "Update an election")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ElectionResponseDto> updateElection(@PathVariable Long electionId,
+                                                              @RequestBody ElectionRequestDto dto,
+                                                              @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        ElectionResponseDto updatedElection = electionService.updateElection(electionId, dto, user.getUser());
+        return ResponseEntity.ok(updatedElection);
+    }
+
+    @DeleteMapping("/{electionId}")
+    @Operation(summary = "Delete an election")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteElection(@PathVariable Long electionId,
+                                               @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        electionService.deleteElection(electionId, user.getUser());
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.kvote.backend.domain;
 
+import com.kvote.backend.dto.ElectionRequestDto;
 import com.kvote.backend.dto.ElectionResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,4 +39,13 @@ public class Election {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    public void update(ElectionRequestDto dto) {
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.startAt = dto.getStartAt();
+        this.endAt = dto.getEndAt();
+        this.isActive = true; // 선거가 생성될 때는 항상 활성화 상태로 설정
+        this.campus = dto.getCampus();
+    }
 }

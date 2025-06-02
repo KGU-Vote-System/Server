@@ -21,12 +21,22 @@ public class CandidateController {
 
     private final CandidateService candidateService;
 
-    @GetMapping("/by-election/{electionId}")
+    @GetMapping("/{electionId}/all")
     @Operation(summary = "Get candidates by election ID")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<CandidateResponseDto>> getCandidatesByElection(@PathVariable Long electionId,
                                                               @AuthenticationPrincipal UserDetailsImpl user) {
         List<CandidateResponseDto> res = candidateService.getCandidatesByElection(electionId);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/{candidateId}")
+    @Operation(summary = "Get a candidate by election ID and candidate ID")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<CandidateResponseDto> getCandidateById(
+                                                @PathVariable Long candidateId,
+                                                @AuthenticationPrincipal UserDetailsImpl user) {
+        CandidateResponseDto res = candidateService.getCandidateById(candidateId);
         return ResponseEntity.ok(res);
     }
 
@@ -37,5 +47,24 @@ public class CandidateController {
                                                 @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(candidateService.addCandidate(dto, user.getUser()));
+    }
+
+    @PutMapping("/{candidateId}")
+    @Operation(summary = "Update a candidate")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<CandidateResponseDto> updateCandidate(@PathVariable Long candidateId,
+                                                @RequestBody CandidateRequestDto dto,
+                                                @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        CandidateResponseDto res = candidateService.updateCandidate(candidateId, dto, user.getUser());
+        return ResponseEntity.ok(res);
+    }
+
+    @DeleteMapping("/{candidateId}")
+    @Operation(summary = "Delete a candidate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteCandidate(@PathVariable Long candidateId,
+                                                @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        candidateService.deleteCandidate(candidateId, user.getUser());
+        return ResponseEntity.noContent().build();
     }
 }
