@@ -30,9 +30,6 @@ public class NoticeRequestDto {
     @NotNull
     private Campus campus;
 
-    @NotNull
-    private NoticeStatus noticeStatus;
-    // 알람일 때는 ALARM, 나머지는 시간계산후 UPCOMING, ONGOING, COMPLETED
 
     @NotNull
     private Date startAt;

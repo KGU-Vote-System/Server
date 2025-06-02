@@ -6,9 +6,11 @@ import com.kvote.backend.domain.NoticeStatus;
 import com.kvote.backend.domain.NoticeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Getter
 @Builder
 @AllArgsConstructor
 public class NoticeResponseDto {
