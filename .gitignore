@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ##ignore##
-.env
+src/main/resources/.env
