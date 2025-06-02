@@ -25,9 +25,12 @@ public class NoticeRequestDto {
     // 알람 or 선거 구분
 
     @NotNull
+    private Date createdAt;
+
+    @NotNull
     private Campus campus;
 
-
+    @NotNull
     private NoticeStatus noticeStatus;
     // 알람일 때는 ALARM, 나머지는 시간계산후 UPCOMING, ONGOING, COMPLETED
 

@@ -1,6 +1,7 @@
 package com.kvote.backend.service;
 
 
+import com.kvote.backend.domain.Campus;
 import com.kvote.backend.domain.Notice;
 import com.kvote.backend.domain.NoticeStatus;
 import com.kvote.backend.domain.NoticeType;
@@ -42,12 +43,13 @@ public class NoticeService {
         return NoticeResponseDto.from(notice);
     }
 
-    public List<NoticeResponseDto> getAllNotices() {
-        List<Notice> notices = noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "startAt"));
+    public List<NoticeResponseDto> getNoticesByCampus(Campus campus) {
+        List<Notice> notices = noticeRepository.findByCampusOrderByStartAtDesc(campus);
         return notices.stream()
                 .map(NoticeResponseDto::from)
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     public NoticeResponseDto updateNotice(Long id, NoticeRequestDto dto) {

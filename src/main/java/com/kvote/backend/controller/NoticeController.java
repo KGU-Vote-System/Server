@@ -1,6 +1,7 @@
 package com.kvote.backend.controller;
 
 
+import com.kvote.backend.domain.Campus;
 import com.kvote.backend.dto.NoticeRequestDto;
 import com.kvote.backend.dto.NoticeResponseDto;
 import com.kvote.backend.service.NoticeService;
@@ -33,12 +34,13 @@ public class NoticeController {
         return ResponseEntity.ok(response);
     }
 
-    // 모든 공지사항 조회 (최신순)
-    @GetMapping
-    public ResponseEntity<List<NoticeResponseDto>> getAllNotices() {
-        List<NoticeResponseDto> list = noticeService.getAllNotices();
-        return ResponseEntity.ok(list);
+    // 캠퍼스별 모든 공지사항 조회 (최신순)
+    @GetMapping("/notices/campus/{campus}")
+    public ResponseEntity<List<NoticeResponseDto>> getNoticesByCampus(@PathVariable Campus campus) {
+        List<NoticeResponseDto> notices = noticeService.getNoticesByCampus(campus);
+        return ResponseEntity.ok(notices);
     }
+
 
     // 공지사항 수정
     @PutMapping("/{id}")

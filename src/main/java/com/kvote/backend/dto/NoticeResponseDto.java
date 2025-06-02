@@ -17,6 +17,7 @@ public class NoticeResponseDto {
     private String content;
     private NoticeType noticeType;
     private Campus campus;
+    private Date createdAt;
     private NoticeStatus noticeStatus;
     private Date startAt;
     private Date endAt;
@@ -35,6 +36,7 @@ public class NoticeResponseDto {
                 .content(notice.getContent())
                 .noticeType(notice.getNoticeType())
                 .campus(notice.getCampus())
+                .createdAt(notice.getCreatedAt())
                 .noticeStatus(status)
                 .startAt(notice.getStartAt())
                 .endAt(notice.getEndAt())

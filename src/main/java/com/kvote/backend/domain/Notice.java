@@ -4,6 +4,7 @@ package com.kvote.backend.domain;
 import com.kvote.backend.dto.NoticeRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 
 import java.util.Date;
@@ -40,6 +41,10 @@ public class Notice {
     @Column(nullable = false)
     private Date startAt;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private Date createdAt;
+
     @Column(nullable = false)
     private Date endAt;
 
@@ -57,6 +62,7 @@ public class Notice {
                 .content(dto.getContent())
                 .noticeType(dto.getNoticeType())
                 .campus(dto.getCampus())
+                .createdAt(dto.getCreatedAt())
                 .startAt(dto.getStartAt())
                 .endAt(dto.getEndAt())
                 .build();
@@ -70,6 +76,7 @@ public class Notice {
         this.startAt = dto.getStartAt();
         this.endAt = dto.getEndAt();
         // noticeStatus 필드는 업데이트 시 변경하지 않음 (동적 계산용)
+        // createdAt은 수정 불가
     }
 
 
