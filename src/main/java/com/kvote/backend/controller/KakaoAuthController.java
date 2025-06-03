@@ -25,7 +25,7 @@ public class KakaoAuthController {
         return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(code));
     }
 
-    @Operation(summary = "회원가입", description = "카카오 이메일 + 사용자 정보 입력 후 최종 회원가입")
+    @Operation(summary = "회원가입", description = "카카오 이메일 + 사용자 정보 입력 후 최종 회원가입 -> ★★★★★★★★이거 쓰면 됨")
     @PostMapping("/kakao/signup")
     public ResponseEntity<TokenDto> signup(@RequestBody SignUpRequest request) {
         return ResponseEntity.ok(kakaoAuthService.completeSignup(request));
