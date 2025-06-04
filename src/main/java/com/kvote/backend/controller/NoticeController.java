@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     // 공지사항 생성
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(summary = "create a new Notice")
     public ResponseEntity<NoticeDetailDto> createNotice(@Valid @RequestBody NoticeRequestDto dto) {
@@ -48,6 +50,7 @@ public class NoticeController {
 
 
     // 공지사항 수정
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     @Operation(summary = "update a notice")
     public ResponseEntity<NoticeDetailDto> updateNotice(@PathVariable Long id,
@@ -57,6 +60,7 @@ public class NoticeController {
     }
 
     // 공지사항 삭제
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(summary = "delete a notice")
     public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
