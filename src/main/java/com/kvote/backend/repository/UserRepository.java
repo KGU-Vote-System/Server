@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByWalletAddress(String walletAddress);
 
     Optional<User> findByKakaoEmail(String kakaoEmail);
+
+    Optional<User> findByRefreshToken(String refreshToken);
 }

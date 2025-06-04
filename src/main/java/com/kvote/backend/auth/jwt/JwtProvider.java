@@ -1,6 +1,7 @@
 package com.kvote.backend.auth.jwt;
 
 import com.kvote.backend.dto.TokenDto;
+import com.kvote.backend.dto.TokenResponseDto;
 import io.jsonwebtoken.*;                // JJWT 라이브러리의 핵심 클래스들
 import io.jsonwebtoken.security.Keys;   // HMAC 키 생성 유틸
 import lombok.extern.slf4j.Slf4j;
@@ -125,8 +126,6 @@ public class JwtProvider {
             return e.getClaims();  // 만료된 경우: 예외 안 터트리고 claims만 꺼내기
         }
     }
-
-
 
 
 
