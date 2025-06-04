@@ -3,7 +3,8 @@ package com.kvote.backend.controller;
 
 import com.kvote.backend.domain.Campus;
 import com.kvote.backend.dto.NoticeRequestDto;
-import com.kvote.backend.dto.NoticeResponseDto;
+import com.kvote.backend.dto.NoticeDetailDto;
+import com.kvote.backend.dto.NoticeListItemDto;
 import com.kvote.backend.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -24,24 +25,24 @@ public class NoticeController {
     // 공지사항 생성
     @PostMapping
     @Operation(summary = "create a new Notice")
-    public ResponseEntity<NoticeResponseDto> createNotice(@Valid @RequestBody NoticeRequestDto dto) {
-        NoticeResponseDto response = noticeService.creatNotice(dto);
+    public ResponseEntity<NoticeDetailDto> createNotice(@Valid @RequestBody NoticeRequestDto dto) {
+        NoticeDetailDto response = noticeService.creatNotice(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 단일 공지사항 조회
     @GetMapping("/{id}")
     @Operation(summary = "read a single notice")
-    public ResponseEntity<NoticeResponseDto> getNotice(@PathVariable Long id) {
-        NoticeResponseDto response = noticeService.getNotice(id);
+    public ResponseEntity<NoticeDetailDto> getNotice(@PathVariable Long id) {
+        NoticeDetailDto response = noticeService.getNotice(id);
         return ResponseEntity.ok(response);
     }
 
-
+    //캠퍼스별 공지사항 리스트 조회 (알람 공지사항은 수원/서울 어디에서든지 항상 최상단, ALL인 경우 수원/서울 두군데에서 모두 조회가능해야함)
     @GetMapping("/notices/campus/{campus}")
     @Operation(summary = "read notices by campus ")
-    public ResponseEntity<List<NoticeResponseDto>> getNoticesByCampus(@PathVariable Campus campus) {
-        List<NoticeResponseDto> notices = noticeService.getNoticesByCampus(campus);
+    public ResponseEntity<List<NoticeListItemDto>> getNoticesByCampus(@PathVariable Campus campus) {
+        List<NoticeListItemDto> notices = noticeService.getNoticesByCampus(campus);
         return ResponseEntity.ok(notices);
     }
 
@@ -49,9 +50,9 @@ public class NoticeController {
     // 공지사항 수정
     @PutMapping("/{id}")
     @Operation(summary = "update a notice")
-    public ResponseEntity<NoticeResponseDto> updateNotice(@PathVariable Long id,
+    public ResponseEntity<NoticeDetailDto> updateNotice(@PathVariable Long id,
                                                           @Valid @RequestBody NoticeRequestDto dto) {
-        NoticeResponseDto response = noticeService.updateNotice(id, dto);
+        NoticeDetailDto response = noticeService.updateNotice(id, dto);
         return ResponseEntity.ok(response);
     }
 

@@ -6,13 +6,14 @@ import com.kvote.backend.domain.Notice;
 import com.kvote.backend.domain.NoticeStatus;
 import com.kvote.backend.domain.NoticeType;
 import com.kvote.backend.dto.NoticeRequestDto;
-import com.kvote.backend.dto.NoticeResponseDto;
+import com.kvote.backend.dto.NoticeDetailDto;
+import com.kvote.backend.dto.NoticeListItemDto;
 import com.kvote.backend.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -24,35 +25,41 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     @Transactional
-    public NoticeResponseDto creatNotice(NoticeRequestDto dto){
+    public NoticeDetailDto creatNotice(NoticeRequestDto dto){
 
         Notice notice = Notice.from(dto);
         if (notice.getNoticeType() == NoticeType.NOTIFY) {
             notice.setNoticeStatus(NoticeStatus.NOTIFY);
         } else {
-            notice.setNoticeStatus(notice.calculateStatus());  // 도메인 내부 메서드 호출
+            notice.setNoticeStatus(notice.calculateStatus());
         }
 
         Notice saved = noticeRepository.save(notice);
-        return NoticeResponseDto.from(saved);
+        return NoticeDetailDto.from(saved);
     }
 
-    public NoticeResponseDto getNotice(Long id) {
+    public NoticeDetailDto getNotice(Long id) {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 공지사항이 존재하지 않습니다."));
-        return NoticeResponseDto.from(notice);
+        return NoticeDetailDto.from(notice);
     }
 
-    public List<NoticeResponseDto> getNoticesByCampus(Campus campus) {
-        List<Notice> notices = noticeRepository.findByCampusOrderByStartAtDesc(campus);
+    public List<NoticeListItemDto> getNoticesByCampus(Campus campus) {
+
+        List<Campus> campuses = Arrays.asList(campus, Campus.ALL);
+
+        List<Notice> notices = noticeRepository.findWithAlarmFirstByCampusIn(campuses);
+
         return notices.stream()
-                .map(NoticeResponseDto::from)
+                .map(NoticeListItemDto::from)
                 .collect(Collectors.toList());
     }
 
 
+
+
     @Transactional
-    public NoticeResponseDto updateNotice(Long id, NoticeRequestDto dto) {
+    public NoticeDetailDto updateNotice(Long id, NoticeRequestDto dto) {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("공지사항이 존재하지 않습니다."));
 
@@ -60,7 +67,7 @@ public class NoticeService {
 
         Notice savedNotice = noticeRepository.save(notice);
 
-        return NoticeResponseDto.from(savedNotice);
+        return NoticeDetailDto.from(savedNotice);
     }
 
 

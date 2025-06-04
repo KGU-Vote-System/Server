@@ -1,13 +1,11 @@
 package com.kvote.backend.dto;
 
 import com.kvote.backend.domain.Campus;
-import com.kvote.backend.domain.NoticeStatus;
 import com.kvote.backend.domain.NoticeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;

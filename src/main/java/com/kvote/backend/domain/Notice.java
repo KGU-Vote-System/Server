@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Setter
 @Getter
