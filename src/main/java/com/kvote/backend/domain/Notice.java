@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Setter
@@ -39,20 +40,20 @@ public class Notice {
     private Campus campus;
 
     @Column(nullable = false)
-    private Date startAt;
+    private LocalDate startAt;
 
     @CreatedDate
     @Column(updatable = false)
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(nullable = false)
-    private Date endAt;
+    private LocalDate endAt;
 
     public NoticeStatus calculateStatus() {
-        Date now = new Date();
+        LocalDate now = LocalDate.now();
 
-        if (now.before(startAt)) return NoticeStatus.UPCOMING;
-        if (now.after(endAt)) return NoticeStatus.COMPLETED;
+        if (now.isBefore(startAt)) return NoticeStatus.UPCOMING;
+        if (now.isAfter(endAt)) return NoticeStatus.COMPLETED;
         return NoticeStatus.ONGOING;
     }
 
@@ -62,7 +63,6 @@ public class Notice {
                 .content(dto.getContent())
                 .noticeType(dto.getNoticeType())
                 .campus(dto.getCampus())
-                .createdAt(dto.getCreatedAt())
                 .startAt(dto.getStartAt())
                 .endAt(dto.getEndAt())
                 .build();
@@ -76,7 +76,6 @@ public class Notice {
         this.startAt = dto.getStartAt();
         this.endAt = dto.getEndAt();
         // noticeStatus 필드는 업데이트 시 변경하지 않음 (동적 계산용)
-        // createdAt은 수정 불가
     }
 
 

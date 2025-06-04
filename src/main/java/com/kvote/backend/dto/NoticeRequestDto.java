@@ -5,6 +5,8 @@ import com.kvote.backend.domain.NoticeStatus;
 import com.kvote.backend.domain.NoticeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 import lombok.Getter;
@@ -25,17 +27,15 @@ public class NoticeRequestDto {
     // 알람 or 선거 구분
 
     @NotNull
-    private Date createdAt;
-
-    @NotNull
     private Campus campus;
 
+    @NotNull
+    private LocalDate startAt;
 
     @NotNull
-    private Date startAt;
+    private LocalDate endAt;
 
-    @NotNull
-    private Date endAt;
+
 
 }
 
