@@ -78,4 +78,11 @@ public class User {
      */
     @Column(nullable = false, unique = true)
     private String krn;
+
+    @Column(nullable = false, unique = true)
+    private String fcmToken;
+
+    public void updateFcmToken(String newToken) {
+        this.fcmToken = newToken;
+    }
 }

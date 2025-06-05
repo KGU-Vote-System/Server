@@ -8,6 +8,7 @@ import com.kvote.backend.domain.NoticeType;
 import com.kvote.backend.dto.NoticeRequestDto;
 import com.kvote.backend.dto.NoticeDetailDto;
 import com.kvote.backend.dto.NoticeListItemDto;
+import com.kvote.backend.fcm.FcmService;
 import com.kvote.backend.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
+    private final FcmService fcmService;
 
     @Transactional
     public NoticeDetailDto creatNotice(NoticeRequestDto dto){
@@ -30,6 +32,7 @@ public class NoticeService {
         Notice notice = Notice.from(dto);
         if (notice.getNoticeType() == NoticeType.NOTIFY) {
             notice.setNoticeStatus(NoticeStatus.NOTIFY);
+            //fcmService.sendNotificationToAllUsers(notice.getTitle(), notice.getTitle());
         } else {
             notice.setNoticeStatus(notice.calculateStatus());
         }

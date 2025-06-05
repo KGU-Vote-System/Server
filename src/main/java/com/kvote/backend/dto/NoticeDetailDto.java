@@ -13,12 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class NoticeDetailDto {
+    private Long id;
     private String title;
     private String content;
     private LocalDate createdAt;
 
     public static NoticeDetailDto from(Notice notice){
         return NoticeDetailDto.builder()
+                .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(notice.getCreatedAt())

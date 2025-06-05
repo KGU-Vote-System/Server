@@ -12,6 +12,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     @Query("SELECT n FROM Notice n " +
             "WHERE n.campus IN :campuses " +
-            "ORDER BY CASE WHEN n.noticeType = 'ALARM' THEN 0 ELSE 1 END, n.startAt DESC")
+            "ORDER BY CASE WHEN n.noticeType = 'NOTIFY' THEN 0 ELSE 1 END, n.startAt DESC")
     List<Notice> findWithAlarmFirstByCampusIn(@Param("campuses") List<Campus> campuses);
 }
