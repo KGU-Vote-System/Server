@@ -14,6 +14,7 @@ java {
 }
 
 repositories {
+	google()
 	mavenCentral()
 }
 
@@ -64,6 +65,9 @@ dependencies {
 
 	//이메일 인증용
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//fcm
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('test') {
