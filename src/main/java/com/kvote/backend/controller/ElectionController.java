@@ -1,6 +1,7 @@
 package com.kvote.backend.controller;
 
 import com.kvote.backend.auth.utils.UserDetailsImpl;
+import com.kvote.backend.domain.User;
 import com.kvote.backend.dto.ElectionRequestDto;
 import com.kvote.backend.dto.ElectionResponseDto;
 import com.kvote.backend.service.ElectionService;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.userdetails.User;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -27,9 +27,23 @@ public class ElectionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ElectionResponseDto> createElection(@RequestBody ElectionRequestDto dto,
                                               @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         ElectionResponseDto res = electionService.createElection(dto, user.getUser());
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
+
+//    @PostMapping("/")
+//    @Operation(summary = "Create a new election (no auth)")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<ElectionResponseDto> createElectionNoAuth(@RequestBody ElectionRequestDto dto) throws Exception {
+//        // 인증 없이 선거 생성 (테스트용)
+//
+//        ElectionResponseDto res = electionService.createElection(dto, user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(res);
+//    }
 
     @GetMapping("/{electionId}")
     @Operation(summary = "Get details of an election")

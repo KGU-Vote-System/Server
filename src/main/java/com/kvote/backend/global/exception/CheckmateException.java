@@ -3,27 +3,25 @@ package com.kvote.backend.global.exception;
 import lombok.Getter;
 
 @Getter
-public class CheckmateException extends RuntimeException{
+public class CheckmateException extends RuntimeException {
     private final ErrorCode errorCode;
-    private String message;
 
     private CheckmateException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+        super(errorCode.getMessage()); // 메시지 전달
         this.errorCode = errorCode;
     }
 
-    private CheckmateException(ErrorCode errorCode ,String message) {
-        super(message);
+    private CheckmateException(ErrorCode errorCode, String customMessage) {
+        super(customMessage);
         this.errorCode = errorCode;
-        this.message = message;
     }
 
     public static CheckmateException from(ErrorCode errorCode) {
         return new CheckmateException(errorCode);
     }
 
-    public static CheckmateException from(ErrorCode errorCode,String message) {
-        return new CheckmateException(errorCode,message);
+    public static CheckmateException from(ErrorCode errorCode, String customMessage) {
+        return new CheckmateException(errorCode, customMessage);
     }
 }
 

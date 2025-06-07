@@ -1,4 +1,4 @@
-package com.kvote.backend.controller;
+package com.kvote.backend.config;
 
 import com.kvote.backend.auth.jwt.JwtFilter;
 import com.kvote.backend.auth.jwt.JwtProvider;
@@ -13,19 +13,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-//
-//    private final JwtProvider jwtProvider;
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/**").authenticated()
-//                        .anyRequest().permitAll()
-//                )
-//                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
+
+    private final JwtProvider jwtProvider;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

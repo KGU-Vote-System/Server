@@ -31,6 +31,8 @@ public class ElectionService {
 
 
     public void isAdmin(User user) {
+        if (user == null)
+            throw CheckmateException.from(ErrorCode.USER_NOT_FOUND);
         if (user.getRole() != UserRole.ROLE_ADMIN)
             throw CheckmateException.from(ErrorCode.UNAUTHORIZED, "관리자 권한이 필요합니다.");
     }
