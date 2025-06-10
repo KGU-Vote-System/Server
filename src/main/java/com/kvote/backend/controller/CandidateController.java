@@ -21,7 +21,7 @@ public class CandidateController {
 
     private final CandidateService candidateService;
 
-    @GetMapping("/{electionId}/all")
+    @GetMapping("/all/{electionId}")
     @Operation(summary = "Get candidates by election ID")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<CandidateResponseDto>> getCandidatesByElection(@PathVariable Long electionId,

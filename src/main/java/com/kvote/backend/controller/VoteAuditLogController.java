@@ -1,6 +1,8 @@
 package com.kvote.backend.controller;
 
 import com.kvote.backend.auth.utils.UserDetailsImpl;
+import com.kvote.backend.global.exception.CheckmateException;
+import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.service.VoteAuditLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,4 +30,9 @@ public class VoteAuditLogController {
         return ResponseEntity.ok("Vote cast successfully");
     }
 
+    @GetMapping("/test")
+    @Operation(summary = "Test endpoint for VoteAuditLog")
+    public ResponseEntity<String> test() {
+        throw CheckmateException.from(ErrorCode.VOTE_FAILD, "Test error for VoteAuditLog");
+    }
 }

@@ -10,6 +10,7 @@ import com.kvote.backend.dto.ElectionResponseDto;
 import com.kvote.backend.repository.CandidateRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.Tuple;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CandidateService {
 
     private final CandidateRepository candidateRepository;
@@ -29,6 +31,7 @@ public class CandidateService {
 
     @Transactional
     public void syncVoteCount(BigInteger electionId) throws Exception {
+        log.info("Syncing vote counts for election ID: {}", electionId);
         List<Candidate> candidates = candidateRepository.findByElectionId(electionId.longValue());
 
         for (Candidate candidate : candidates) {
@@ -60,7 +63,7 @@ public class CandidateService {
             throw new RuntimeException("No CandidateAdded event found in receipt");
         }
 
-        BigInteger candidateId = events.get(0).candidateId;
+        BigInteger candidateId = events.getFirst().candidateId;
 
         // RDB 저장
         Candidate candidate = Candidate.builder()
