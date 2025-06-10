@@ -80,4 +80,9 @@ public class User {
      */
     @Column(nullable = false, unique = true)
     private String krn;
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 }

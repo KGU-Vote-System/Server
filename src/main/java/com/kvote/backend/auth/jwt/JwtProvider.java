@@ -6,6 +6,7 @@ import com.kvote.backend.dto.TokenDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.repository.UserRepository;
+import com.kvote.backend.dto.TokenResponseDto;
 import io.jsonwebtoken.*;                // JJWT 라이브러리의 핵심 클래스들
 import io.jsonwebtoken.security.Keys;   // HMAC 키 생성 유틸
 import lombok.extern.slf4j.Slf4j;
