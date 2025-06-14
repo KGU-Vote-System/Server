@@ -6,6 +6,7 @@ import com.kvote.backend.domain.*;
 import com.kvote.backend.dto.CandidateResponseDto;
 import com.kvote.backend.dto.ElectionRequestDto;
 import com.kvote.backend.dto.ElectionResponseDto;
+import com.kvote.backend.dto.TotalVoteCountDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.repository.CandidateRepository;
@@ -58,11 +59,15 @@ public class ElectionService {
         }
     }
 
-    public Long getElectionVoteCount(BigInteger electionId, User user) throws Exception {
+    public TotalVoteCountDto getElectionVoteCount(BigInteger electionId, User user) throws Exception {
         if (electionRepository.findById(electionId.longValue()).isEmpty()) {
             throw CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND);
         }
-        return electionManager.getTotalVotes(electionId).send().longValue();
+        Long voteCount = electionManager.getTotalVotes(electionId).send().longValue();
+        return TotalVoteCountDto.builder()
+                .electionId(electionId.longValue())
+                .voteCount(voteCount)
+                .build();
     }
 
     @Transactional
