@@ -18,8 +18,9 @@ public class Candidate {
     @Column(nullable = false)
     private Long voteCount; // 투표 수
 
-    @Column(nullable = false)
-    private Long electionId;  // 소속 선거 ID (Election 엔티티의 id)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "election_id")
+    private Election election;  // 소속 선거 ID (Election 엔티티의 id)
 
     public void updateVoteCount(Long voteCount) {
         this.voteCount = voteCount;

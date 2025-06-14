@@ -11,4 +11,13 @@ public class CandidateResponseDto {
     private String name; // 선거운동부 이름
     private Long electionId; // 소속 선거 ID
     private Long voteCount; // 투표 수
+
+    public static CandidateResponseDto from(Candidate candidate) {
+        return CandidateResponseDto.builder()
+                .id(candidate.getId())
+                .name(candidate.getName())
+                .electionId(candidate.getElection().getId())
+                .voteCount(candidate.getVoteCount())
+                .build();
+    }
 }

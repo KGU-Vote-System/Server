@@ -7,7 +7,10 @@ import com.kvote.backend.domain.User;
 import com.kvote.backend.dto.CandidateRequestDto;
 import com.kvote.backend.dto.CandidateResponseDto;
 import com.kvote.backend.dto.ElectionResponseDto;
+import com.kvote.backend.global.exception.CheckmateException;
+import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.repository.CandidateRepository;
+import com.kvote.backend.repository.ElectionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ public class CandidateService {
     private final CandidateRepository candidateRepository;
     private final ElectionManager electionManager;
     private final ElectionService electionService;
+    private final ElectionRepository electionRepository;
 
     @Transactional
     public void syncVoteCount(BigInteger electionId) throws Exception {
@@ -46,8 +50,8 @@ public class CandidateService {
         return candidates.stream()
                 .map(candidate -> CandidateResponseDto.builder()
                         .id(candidate.getId())
+                        .electionId(candidate.getElection().getId())
                         .name(candidate.getName())
-                        .electionId(candidate.getElectionId())
                         .voteCount(candidate.getVoteCount())
                         .build())
                 .toList();
@@ -64,19 +68,20 @@ public class CandidateService {
         }
 
         BigInteger candidateId = events.getFirst().candidateId;
+        Election election = electionRepository.findById(dto.getElectionId())
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND));
 
         // RDB 저장
-        Candidate candidate = Candidate.builder()
-                .electionId(dto.getElectionId())
+        Candidate res = candidateRepository.save(Candidate.builder()
+                .election(election)
                 .id(candidateId.longValue())
                 .name(dto.getName())
                 .voteCount(0L)
-                .build();
-        Candidate res = candidateRepository.save(candidate);
+                .build());
 
         return CandidateResponseDto.builder()
                 .id(res.getId())
-                .electionId(res.getElectionId())
+                .electionId(res.getElection().getId())
                 .name(res.getName())
                 .voteCount(res.getVoteCount())
                 .build();
@@ -87,7 +92,7 @@ public class CandidateService {
                 .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + candidateId));
         return CandidateResponseDto.builder()
                 .id(candidate.getId())
-                .electionId(candidate.getElectionId())
+                .electionId(candidate.getElection().getId())
                 .name(candidate.getName())
                 .voteCount(candidate.getVoteCount())
                 .build();
@@ -101,7 +106,7 @@ public class CandidateService {
         Candidate updatedCandidate = candidateRepository.save(candidate);
         return CandidateResponseDto.builder()
                 .id(updatedCandidate.getId())
-                .electionId(updatedCandidate.getElectionId())
+                .electionId(updatedCandidate.getElection().getId())
                 .name(updatedCandidate.getName())
                 .voteCount(updatedCandidate.getVoteCount())
                 .build();
@@ -113,7 +118,7 @@ public class CandidateService {
                 .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + candidateId));
         candidateRepository.delete(candidate);
         try {
-            electionManager.deleteCandidate(BigInteger.valueOf(candidate.getElectionId()), BigInteger.valueOf(candidate.getId())).send();
+            electionManager.deleteCandidate(BigInteger.valueOf(candidate.getElection().getId()), BigInteger.valueOf(candidate.getId())).send();
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove candidate from blockchain: " + e.getMessage(), e);
         }

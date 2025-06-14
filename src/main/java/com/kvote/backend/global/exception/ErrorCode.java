@@ -26,8 +26,16 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
+    // nominee errors
+    NOMINEE_NOT_FOUND(HttpStatus.NOT_FOUND, "후보자를 찾을 수 없습니다."),
+    MAIN_NOMINEE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 정후보가 존재합니다."),
+    SUB_NOMINEE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 부후보가 존재합니다."),
+
     // candidate errors,
     CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND, "후보자를 찾을 수 없습니다."),
+
+    // pledge errors
+    PLEDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "공약을 찾을 수 없습니다."),
 
     // success codes,
     REQUEST_OK(HttpStatus.OK, "요청이 성공했습니다."),;
