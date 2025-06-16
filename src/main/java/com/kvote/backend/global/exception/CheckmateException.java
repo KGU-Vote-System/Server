@@ -22,7 +22,7 @@ public class CheckmateException extends RuntimeException{
         return new CheckmateException(errorCode);
     }
 
-    public static CheckmateException from(ErrorCode errorCode,String message) {
+    public static CheckmateException from(ErrorCode errorCode, String message) {
         return new CheckmateException(errorCode,message);
     }
 }

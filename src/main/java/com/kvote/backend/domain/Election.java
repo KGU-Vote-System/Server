@@ -1,7 +1,6 @@
 package com.kvote.backend.domain;
 
 import com.kvote.backend.dto.ElectionRequestDto;
-import com.kvote.backend.dto.ElectionResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +32,9 @@ public class Election {
     @Column(nullable = false)
     private Campus campus;
 
+    @Column(length = 66, nullable = false)
+    private String collageMajorName;
+
     @Column(nullable = false)
     private String txHash;
 
@@ -47,5 +49,14 @@ public class Election {
         this.endAt = dto.getEndAt();
         this.isActive = true; // 선거가 생성될 때는 항상 활성화 상태로 설정
         this.campus = dto.getCampus();
+    }
+
+    public void updateActiveStatus(boolean b) {
+        this.isActive = b;
+    }
+
+    public void startElection() {
+        this.isActive = true;
+        this.startAt = new Date();
     }
 }

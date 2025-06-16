@@ -18,6 +18,9 @@ public interface VoteAuditLogRepository extends JpaRepository<VoteAuditLog, Long
     // 특정 시간 이후의 투표 감사 로그 조회
     List<VoteAuditLog> findByTimestampAfter(Date  timestamp);
 
+    // 선거 ID와 투표자 주소로 투표 감사 로그 조회
+    Optional<Object> findByElectionIdAndVoterAddress(long electionId, String walletAddress);
+
     // 중복투표 체크
-    Optional<VoteAuditLog> findByElectionIdAndUserId(Long electionId, Long userId);
+//    Optional<VoteAuditLog> findByElectionIdAndUserId(Long electionId, Long userId);
 }

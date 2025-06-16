@@ -21,6 +21,7 @@ import org.web3j.tuples.generated.Tuple2;
 import org.web3j.tuples.generated.Tuple3;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,7 +40,7 @@ public class CandidateService {
         List<Candidate> candidates = candidateRepository.findByElectionId(electionId.longValue());
 
         for (Candidate candidate : candidates) {
-            Tuple3<String, BigInteger, Boolean> res = electionManager.getCandidate(electionId, BigInteger.valueOf(candidate.getId())).send();
+            Tuple3<String, BigInteger, Boolean> res = electionManager.getCandidate(BigInteger.valueOf(candidate.getId())).send();
             Long voteCount = res.component2().longValue();
             candidate.updateVoteCount(voteCount);
         }
@@ -59,17 +60,22 @@ public class CandidateService {
 
     public CandidateResponseDto addCandidate(CandidateRequestDto dto, User owner) throws Exception {
         electionService.isAdmin(owner);
+        Election election = electionRepository.findById(dto.getElectionId())
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND));
+        if (election.getStartAt().before(new Date())) {
+            throw CheckmateException.from(ErrorCode.ELECTION_ALREADY_STARTED, "Election has already started");
+        }
+
         TransactionReceipt receipt = electionManager.addCandidate(
                 BigInteger.valueOf(dto.getElectionId()), dto.getName()).send();
 
         List<ElectionManager.CandidateAddedEventResponse> events = electionManager.getCandidateAddedEvents(receipt);
         if (events.isEmpty()) {
-            throw new RuntimeException("No CandidateAdded event found in receipt");
+            throw CheckmateException.from(ErrorCode.CANDIDATE_ADD_FAILED, "Candidate added event not found in transaction receipt");
         }
 
         BigInteger candidateId = events.getFirst().candidateId;
-        Election election = electionRepository.findById(dto.getElectionId())
-                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND));
+
 
         // RDB 저장
         Candidate res = candidateRepository.save(Candidate.builder()
@@ -89,7 +95,7 @@ public class CandidateService {
 
     public CandidateResponseDto getCandidateById(Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + candidateId));
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.CANDIDATE_NOT_FOUND, "Candidate not found with id: " + candidateId));
         return CandidateResponseDto.builder()
                 .id(candidate.getId())
                 .electionId(candidate.getElection().getId())
@@ -100,8 +106,14 @@ public class CandidateService {
 
     public CandidateResponseDto updateCandidate(Long candidateId, CandidateRequestDto dto, User user) {
         electionService.isAdmin(user);
+        Election election = electionRepository.findById(dto.getElectionId())
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND, "Election not found with id: " + dto.getElectionId()));
+        if (election.getStartAt().before(new Date())) {
+            throw CheckmateException.from(ErrorCode.ELECTION_ALREADY_STARTED, "Election has already started");
+        }
+
         Candidate candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + candidateId));
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.CANDIDATE_NOT_FOUND, "Candidate not found with id: " + candidateId));
         candidate.updateName(dto.getName());
         Candidate updatedCandidate = candidateRepository.save(candidate);
         return CandidateResponseDto.builder()
@@ -115,7 +127,7 @@ public class CandidateService {
     public void deleteCandidate(Long candidateId, User user) {
         electionService.isAdmin(user);
         Candidate candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + candidateId));
+                .orElseThrow(() -> CheckmateException.from(ErrorCode.CANDIDATE_NOT_FOUND, "Candidate not found with id: " + candidateId));
         candidateRepository.delete(candidate);
         try {
             electionManager.deleteCandidate(BigInteger.valueOf(candidate.getElection().getId()), BigInteger.valueOf(candidate.getId())).send();

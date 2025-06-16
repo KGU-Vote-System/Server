@@ -52,6 +52,14 @@ public class ElectionController {
         return new ApiResponse<>(electionService.getElectionVoteCount(electionId, user.getUser()));
     }
 
+    @PostMapping("/{electionId}/start")
+    @Operation(summary = "Start an election")
+    public ApiResponse<Void> startElection(@PathVariable BigInteger electionId,
+                                              @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+        electionService.startElection(electionId, user.getUser());
+        return new ApiResponse<>(SuccessCode.REQUEST_OK);
+    }
+
     @PostMapping("/{electionId}/end")
     @Operation(summary = "End an election")
     public ApiResponse<Void> endElection(@PathVariable BigInteger electionId,

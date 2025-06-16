@@ -24,7 +24,7 @@ public class VoteAuditLog {
     private Long electionId;
 
     @Column(nullable = false)
-    private Long userId;  // 투표한 사용자 ID
+    private String voterAddress;  // 투표자의 블록체인 주소
 
     @Column(nullable = false, unique = true)
     private String txHash;  // 블록체인 트랜잭션 해시

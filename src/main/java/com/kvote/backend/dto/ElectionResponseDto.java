@@ -1,11 +1,14 @@
 package com.kvote.backend.dto;
 
 import com.kvote.backend.domain.Campus;
+import com.kvote.backend.domain.Election;
 import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ElectionResponseDto {
 
@@ -18,11 +21,11 @@ public class ElectionResponseDto {
     private Boolean isActive;
     private Campus campus;
     private Long ownerId;
+    private String collageMajorName;
 
-    public static ElectionResponseDto from(com.kvote.backend.domain.Election election) {
+    public static ElectionResponseDto from(Election election) {
         return ElectionResponseDto.builder()
                 .id(election.getId())
-//                .contractElectionId(election.getContractElection().getId())
                 .title(election.getTitle())
                 .description(election.getDescription())
                 .startAt(election.getStartAt())
@@ -30,6 +33,7 @@ public class ElectionResponseDto {
                 .isActive(election.getIsActive())
                 .campus(election.getCampus())
                 .ownerId(election.getOwner().getId())
+                .collageMajorName(election.getCollageMajorName())
                 .build();
     }
 }
