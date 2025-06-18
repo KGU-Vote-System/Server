@@ -52,7 +52,7 @@ public class ElectionController {
         return new ApiResponse<>(electionService.getElectionVoteCount(electionId, user.getUser()));
     }
 
-    @GetMapping("/{year}")
+    @GetMapping("/year/{year}")
     @Operation(summary = "Get elections by year")
     public ApiResponse<List<ElectionResponseDto>> getElectionsByYear(@PathVariable int year,
                                                                       @AuthenticationPrincipal UserDetailsImpl user) {
