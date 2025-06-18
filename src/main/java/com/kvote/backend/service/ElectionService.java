@@ -23,6 +23,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -217,5 +218,23 @@ public class ElectionService {
             responseDtos.add(electionToDto(election));
         }
         return responseDtos;
+
+    public List<ElectionResponseDto> getEndedElections(){
+        List<Election> endedElections = electionRepository.findByIsActiveFalse();
+
+        return endedElections.stream()
+                .map(ElectionResponseDto::from)
+                .collect(Collectors.toList());
+    }
+    public List<ElectionResponseDto> getUpcomingElections() {
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        List<Election> elections = electionRepository.findByIsActiveTrueAndStartAtAfter(now);
+        return elections.stream().map(ElectionResponseDto::from).collect(Collectors.toList());
+    }
+
+    public List<ElectionResponseDto> getOngoingElections() {
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        List<Election> elections = electionRepository.findByIsActiveTrueAndStartAtBefore(now);
+        return elections.stream().map(ElectionResponseDto::from).collect(Collectors.toList());
     }
 }

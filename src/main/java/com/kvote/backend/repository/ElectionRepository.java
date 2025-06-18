@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,11 @@ public interface ElectionRepository extends JpaRepository<Election, Long> {
     List<Election> findByIsActiveTrue();
 
     List<Election> findByStartAtBetween(Date from, Date to);
+  
+    //종료된 선거 목록을 조회하는 메서드
+    List<Election> findByIsActiveFalse();
+
+    List<Election> findByIsActiveTrueAndStartAtAfter(LocalDateTime now);
+
+    List<Election> findByIsActiveTrueAndStartAtBefore(LocalDateTime now);
 }

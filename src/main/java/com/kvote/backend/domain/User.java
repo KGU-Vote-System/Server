@@ -85,4 +85,11 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    @Column(nullable = false, unique = true)
+    private String fcmToken;
+
+    public void updateFcmToken(String newToken) {
+        this.fcmToken = newToken;
+    }
+
 }
