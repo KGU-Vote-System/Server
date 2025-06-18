@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -51,31 +53,43 @@ public class User {
      * 학생 인증용 이메일
      * - 반드시 kyonggi.ac.kr 도메인
      */
-//    @NotBlank
-//    @Email
-//    @Pattern(
-//            regexp = "^[A-Za-z0-9._%+-]+@kyonggi\\.ac\\.kr$",
-//            message = "Kyonggi University 이메일(@kyonggi.ac.kr)만 허용됩니다."
-//    )
+    @NotBlank
+    @Email
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@kyonggi\\.ac\\.kr$",
+            message = "Kyonggi University 이메일(@kyonggi.ac.kr)만 허용됩니다."
+    )
     @Column(nullable = false, unique = true)
     private String studentEmail;
 
     /** Klaytn 지갑 주소 */
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String walletAddress;
 
     /**
      * Klaytn KAS Key ID
      * (KAS 지갑 관리용 key identifier)
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String keyId;
 
     /**
      * Klaytn Resource Name (KRN)
      * (KAS 리소스 식별자)
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String krn;
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    @Column(nullable = false, unique = true)
+    private String fcmToken;
+
+    public void updateFcmToken(String newToken) {
+        this.fcmToken = newToken;
+    }
+
 }
