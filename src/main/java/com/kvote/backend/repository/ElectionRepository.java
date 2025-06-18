@@ -4,6 +4,7 @@ import com.kvote.backend.domain.Election;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface ElectionRepository extends JpaRepository<Election, Long> {
 
     // 활성화된 선거 목록을 조회하는 메소드
     List<Election> findByIsActiveTrue();
+
+    List<Election> findByStartAtBetween(Date from, Date to);
 }

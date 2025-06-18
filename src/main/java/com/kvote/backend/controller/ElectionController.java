@@ -52,6 +52,13 @@ public class ElectionController {
         return new ApiResponse<>(electionService.getElectionVoteCount(electionId, user.getUser()));
     }
 
+    @GetMapping("/{year}")
+    @Operation(summary = "Get elections by year")
+    public ApiResponse<List<ElectionResponseDto>> getElectionsByYear(@PathVariable int year,
+                                                                      @AuthenticationPrincipal UserDetailsImpl user) {
+        return new ApiResponse<List<ElectionResponseDto>>(electionService.getElectionsByYear(year, user.getUser()));
+    }
+
     @PostMapping("/{electionId}/start")
     @Operation(summary = "Start an election")
     public ApiResponse<Void> startElection(@PathVariable BigInteger electionId,

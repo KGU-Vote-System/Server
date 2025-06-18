@@ -8,6 +8,7 @@ import com.kvote.backend.dto.ElectionResponseDto;
 import com.kvote.backend.dto.TotalVoteCountDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
+import com.kvote.backend.global.response.SuccessCode;
 import com.kvote.backend.repository.ElectionRepository;
 import com.kvote.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -199,5 +200,22 @@ public class ElectionService {
                 }
             }
         }
+    }
+
+    public List<ElectionResponseDto> getElectionsByYear(int year, User user) {
+        List<Election> elections = electionRepository.findByStartAtBetween(
+                Date.from(LocalDateTime.of(year, 1, 1, 0, 0).toInstant(ZoneOffset.UTC)),
+                Date.from(LocalDateTime.of(year + 1, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
+        );
+
+        if (elections.isEmpty()) {
+            throw CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND, "해당 연도의 선거가 없습니다.");
+        }
+
+        List<ElectionResponseDto> responseDtos = new ArrayList<>();
+        for (Election election : elections) {
+            responseDtos.add(electionToDto(election));
+        }
+        return responseDtos;
     }
 }
