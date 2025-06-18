@@ -64,21 +64,21 @@ public class User {
 
     /** Klaytn 지갑 주소 */
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String walletAddress;
 
     /**
      * Klaytn KAS Key ID
      * (KAS 지갑 관리용 key identifier)
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String keyId;
 
     /**
      * Klaytn Resource Name (KRN)
      * (KAS 리소스 식별자)
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String krn;
 
     public void setRefreshToken(String refreshToken) {
