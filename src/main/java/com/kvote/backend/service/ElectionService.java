@@ -8,7 +8,9 @@ import com.kvote.backend.dto.ElectionResponseDto;
 import com.kvote.backend.dto.TotalVoteCountDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
+import com.kvote.backend.global.response.SuccessCode;
 import com.kvote.backend.repository.ElectionRepository;
+import com.kvote.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class ElectionService {
 
     private final ElectionRepository electionRepository;
     private final ElectionManager electionManager;
+    private final UserRepository userRepository;
 
 
     public void isAdmin(User user) {
@@ -66,9 +69,17 @@ public class ElectionService {
             throw CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND);
         }
         Long voteCount = electionManager.getTotalVotes(electionId).send().longValue();
+        List<User> voters = userRepository.findAllByCollegeMajorName(
+                electionRepository.findById(electionId.longValue())
+                        .orElseThrow(() -> CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND))
+                        .getCollageMajorName()
+        );
         return TotalVoteCountDto.builder()
                 .electionId(electionId.longValue())
-                .voteCount(voteCount)
+                .votedCount(voteCount)
+                .voterCount((long) voters.size())
+                .turnoutRate(
+                        voters.isEmpty() ? 0.0 : (double) voteCount / voters.size() * 100)
                 .build();
     }
 
@@ -191,6 +202,22 @@ public class ElectionService {
             }
         }
     }
+
+    public List<ElectionResponseDto> getElectionsByYear(int year, User user) {
+        List<Election> elections = electionRepository.findByStartAtBetween(
+                Date.from(LocalDateTime.of(year, 1, 1, 0, 0).toInstant(ZoneOffset.UTC)),
+                Date.from(LocalDateTime.of(year + 1, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
+        );
+
+        if (elections.isEmpty()) {
+            throw CheckmateException.from(ErrorCode.ELECTION_NOT_FOUND, "해당 연도의 선거가 없습니다.");
+        }
+
+        List<ElectionResponseDto> responseDtos = new ArrayList<>();
+        for (Election election : elections) {
+            responseDtos.add(electionToDto(election));
+        }
+        return responseDtos;
 
     public List<ElectionResponseDto> getEndedElections(){
         List<Election> endedElections = electionRepository.findByIsActiveFalse();

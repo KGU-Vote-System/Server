@@ -6,7 +6,7 @@ import com.kvote.backend.domain.Election;
 import com.kvote.backend.domain.User;
 import com.kvote.backend.dto.CandidateRequestDto;
 import com.kvote.backend.dto.CandidateResponseDto;
-import com.kvote.backend.dto.ElectionResponseDto;
+import com.kvote.backend.dto.CandidateResultsDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.repository.CandidateRepository;
@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tuples.Tuple;
-import org.web3j.tuples.generated.Tuple2;
 import org.web3j.tuples.generated.Tuple3;
 
 import java.math.BigInteger;
@@ -134,5 +132,25 @@ public class CandidateService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove candidate from blockchain: " + e.getMessage(), e);
         }
+    }
+
+    public List<CandidateResultsDto> getElectionResults(Long electionId) {
+        List<Candidate> candidates = candidateRepository.findByElectionId(electionId);
+        if (candidates.isEmpty()) {
+            throw CheckmateException.from(ErrorCode.CANDIDATE_NOT_FOUND, "No candidates found for election ID: " + electionId);
+        }
+
+        Long totalVotes = candidates.stream()
+                .mapToLong(Candidate::getVoteCount)
+                .sum();
+        return candidates.stream()
+                .map(candidate -> CandidateResultsDto.builder()
+                        .id(candidate.getId())
+                        .electionId(candidate.getElection().getId())
+                        .name(candidate.getName())
+                        .voteCount(candidate.getVoteCount())
+                        .votePercentage(totalVotes > 0 ? (double) candidate.getVoteCount() / totalVotes * 100 : 0.0)
+                        .build())
+                .toList();
     }
 }

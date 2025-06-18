@@ -1,5 +1,6 @@
 package com.kvote.backend.repository;
 
+import com.kvote.backend.domain.Campus;
 import com.kvote.backend.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByRefreshToken(String refreshToken);
 
+    List<User> findAllByCollegeMajorName(String collageMajorName);
+
     List<User> findAllByFcmTokenIsNotNull();
+
 }
