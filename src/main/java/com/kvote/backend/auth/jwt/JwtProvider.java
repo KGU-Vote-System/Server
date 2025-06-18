@@ -146,10 +146,21 @@ public class JwtProvider {
         }
     }
 
+    public long getRemainingTime(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-
-
-
+            Date expiration = claims.getExpiration();
+            return expiration.getTime() - System.currentTimeMillis(); // 밀리초(ms)
+        } catch (ExpiredJwtException e) {
+            // 이미 만료된 토큰인 경우 남은 시간은 0
+            return 0;
+        }
+    }
 
 
 }
