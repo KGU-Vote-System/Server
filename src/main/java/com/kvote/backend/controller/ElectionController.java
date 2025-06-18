@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,5 +84,28 @@ public class ElectionController {
                                                @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
         electionService.deleteElection(electionId, user.getUser());
         return new ApiResponse<>(SuccessCode.REQUEST_OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    @Operation(summary = "예정, 진행중, 종료됨으로 나눠서 선거 조회")
+    public ResponseEntity<List<ElectionResponseDto>> getElectionsByStatus(@RequestParam String status) {
+        List<ElectionResponseDto> elections;
+
+        switch (status.toLowerCase()) {
+            case "upcoming":
+                elections = electionService.getUpcomingElections();
+                break;
+            case "ongoing":
+                elections = electionService.getOngoingElections();
+                break;
+            case "ended":
+                elections = electionService.getEndedElections();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid election status: " + status);
+        }
+
+        return ResponseEntity.ok(elections);
     }
 }
