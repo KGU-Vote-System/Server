@@ -33,7 +33,7 @@ public class VoteAuditLogController {
         return new ApiResponse<>(SuccessCode.REQUEST_OK);
     }
 
-    @PostMapping("/is-eligible")
+    @PostMapping("/{electionId}/is-eligible")
     @Operation(summary = "Check if user is eligible to vote in an election")
     public ApiResponse<Boolean> isEligibleToVote(@RequestParam BigInteger electionId,
                                                  @AuthenticationPrincipal UserDetailsImpl user) {

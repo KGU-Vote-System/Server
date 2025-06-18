@@ -218,6 +218,7 @@ public class ElectionService {
             responseDtos.add(electionToDto(election));
         }
         return responseDtos;
+    }
 
     public List<ElectionResponseDto> getEndedElections(){
         List<Election> endedElections = electionRepository.findByIsActiveFalse();
