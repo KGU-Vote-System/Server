@@ -94,7 +94,7 @@ public class ElectionController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping("/status")
     @Operation(summary = "예정, 진행중, 종료됨으로 나눠서 선거 조회")
     public ResponseEntity<List<ElectionResponseDto>> getElectionsByStatus(@RequestParam String status) {
         List<ElectionResponseDto> elections;
