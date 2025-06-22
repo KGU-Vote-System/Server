@@ -85,7 +85,7 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String fcmToken;
 
     public void updateFcmToken(String newToken) {
