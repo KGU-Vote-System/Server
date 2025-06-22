@@ -8,6 +8,7 @@ import com.kvote.backend.service.KakaoAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,4 +37,5 @@ public class KakaoAuthController {
     public ResponseEntity<TokenDto> refresh(@RequestParam("refreshToken") String refreshToken) {
         return ResponseEntity.ok(kakaoAuthService.refreshToken(refreshToken));
     }
+
 }
