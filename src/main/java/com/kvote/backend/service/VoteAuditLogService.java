@@ -143,10 +143,10 @@ public class VoteAuditLogService {
         if (election.getEndAt().before(new Date()) || election.getStartAt().after(new Date())) {
             throw CheckmateException.from(ErrorCode.ELECTION_NOT_ACTIVE_OR_DELETED, "해당 선거는 현재 투표할 수 없는 상태입니다.");
         }
-        // 캠퍼스 불일치
-        if (election.getCampus() == null || !election.getCollageMajorName().equals(user.getCollegeMajorName())) {
-            throw CheckmateException.from(ErrorCode.UNAUTHORIZED, "해당 선거에 투표할 권한이 없습니다.");
-        }
+//        // 캠퍼스 불일치
+//        if (election.getCampus() == null || !election.getCollageMajorName().equals(user.getCollegeMajorName())) {
+//            throw CheckmateException.from(ErrorCode.UNAUTHORIZED, "해당 선거에 투표할 권한이 없습니다.");
+//        }
 
         try {
             TransactionReceipt receipt = electionManager

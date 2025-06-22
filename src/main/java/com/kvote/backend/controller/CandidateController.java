@@ -3,6 +3,7 @@ package com.kvote.backend.controller;
 import com.kvote.backend.auth.utils.UserDetailsImpl;
 import com.kvote.backend.dto.CandidateRequestDto;
 import com.kvote.backend.dto.CandidateResponseDto;
+import com.kvote.backend.dto.CandidateResultsDto;
 import com.kvote.backend.global.response.ApiResponse;
 import com.kvote.backend.global.response.SuccessCode;
 import com.kvote.backend.service.CandidateService;
@@ -60,4 +61,12 @@ public class CandidateController {
         candidateService.deleteCandidate(candidateId, user.getUser());
         return new ApiResponse<>(SuccessCode.REQUEST_OK);
     }
+
+    @GetMapping("/{electionId}/result")
+    @Operation(summary = "Get election results by election ID")
+    public ApiResponse<List<CandidateResultsDto>> getElectionResults(@PathVariable Long electionId,
+                                                                     @AuthenticationPrincipal UserDetailsImpl user) {
+        return new ApiResponse<List<CandidateResultsDto>>(candidateService.getElectionResults(electionId));
+    }
+
 }
