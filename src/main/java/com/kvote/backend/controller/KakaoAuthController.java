@@ -17,11 +17,11 @@ public class KakaoAuthController {
 
     private final KakaoAuthService kakaoAuthService;
 
-    @Operation(summary = "카카오 로그인 시도", description = "인가 코드를 받아 로그인 시도 후 가입 여부 응답")
-    @PostMapping("/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody CodeRequestDto codeDto) {
-        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(codeDto.getCode()));
-    }
+//    @Operation(summary = "카카오 로그인 시도", description = "인가 코드를 받아 로그인 시도 후 가입 여부 응답")
+//    @PostMapping("/kakao")
+//    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody CodeRequestDto codeDto) {
+//        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(codeDto.getCode()));
+//    }
 
     // 🔍 code를 브라우저로 받기 위한 디버그 엔드포인트
     @GetMapping("/kakao/test")
