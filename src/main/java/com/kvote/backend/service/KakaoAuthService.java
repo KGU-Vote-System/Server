@@ -39,15 +39,6 @@ public class KakaoAuthService {
     @Value("${kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
-    @PostConstruct
-    public void init() {
-        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) throws IOException {
-                return false;
-            }
-        });
-    }
 
     @Transactional
     public KakaoLoginResponse handleKakaoLogin(String code) {
