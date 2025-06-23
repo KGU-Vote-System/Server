@@ -154,15 +154,27 @@ public class KakaoAuthService {
 
         try {
             JsonNode json = objectMapper.readTree(response.getBody());
+
+            // 1순위: 이메일
             JsonNode account = json.get("kakao_account");
-            if (account == null || !account.has("email")) {
-                System.err.println("카카오 계정 정보에 email 없음: " + response.getBody());
-                return null; // 여기도 null 반환
+            if (account != null && account.has("email")) {
+                return account.get("email").asText();
             }
-            return account.get("email").asText();
+
+            // 2순위: 닉네임
+            if (account != null && account.has("profile") && account.get("profile").has("nickname")) {
+                return account.get("profile").get("nickname").asText() + "@kakao-temp.local";
+            }
+
+            // 3순위: ID라도 넘기기
+            if (json.has("id")) {
+                return "kakao_" + json.get("id").asText() + "@kakao-temp.local";
+            }
+
+            return null;
         } catch (Exception e) {
             System.err.println("카카오 사용자 정보 파싱 실패: " + e.getMessage());
-            return null; // 파싱 실패 시도 여기서도 null
+            return null;
         }
     }
 
