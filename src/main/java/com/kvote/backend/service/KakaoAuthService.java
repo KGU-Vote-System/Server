@@ -116,7 +116,7 @@ public class KakaoAuthService {
                 + "&code=" + code;
 
         HttpEntity<String> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
         System.out.println("카카오 응답 상태: " + response.getStatusCode());
         System.out.println("카카오 응답 바디: " + response.getBody());
