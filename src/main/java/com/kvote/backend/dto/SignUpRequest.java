@@ -2,8 +2,10 @@ package com.kvote.backend.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
+@Getter
 @Schema(description = "회원가입 요청 DTO")
 public class SignUpRequest {
 
