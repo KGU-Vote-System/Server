@@ -1,9 +1,6 @@
 package com.kvote.backend.controller;
 
-import com.kvote.backend.dto.KakaoLoginResponse;
-import com.kvote.backend.dto.SignUpRequest;
-import com.kvote.backend.dto.TokenDto;
-import com.kvote.backend.dto.TokenResponseDto;
+import com.kvote.backend.dto.*;
 import com.kvote.backend.service.KakaoAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +18,9 @@ public class KakaoAuthController {
     private final KakaoAuthService kakaoAuthService;
 
     @Operation(summary = "카카오 로그인 시도", description = "인가 코드를 받아 로그인 시도 후 가입 여부 응답")
-    @GetMapping("/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestParam("code") String code) {
-        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(code));
+    @PostMapping("/kakao")
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody CodeRequestDto codeDto) {
+        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(codeDto.getCode()));
     }
 
     @Operation(summary = "회원가입", description = "카카오 이메일 + 사용자 정보 입력 후 최종 회원가입 -> ★★★★★★★★이거 쓰면 됨")
