@@ -55,6 +55,10 @@ public class KakaoAuthService {
         String accessToken = getAccessTokenFromKakao(code);
         String kakaoEmail = getKakaoEmail(accessToken);
 
+        if(kakaoEmail ==null){
+            return new KakaoLoginResponse(false,null,null);
+        }
+
         return userRepository.findByKakaoEmail(kakaoEmail)
                 .map(user -> {
                     TokenDto token = generateTokenFor(user);
@@ -143,15 +147,22 @@ public class KakaoAuthService {
         System.out.println("사용자 정보 요청 토큰: " + token);
         System.out.println("카카오 사용자 정보 응답 바디: " + response.getBody());
 
+        if (response.getBody() == null) {
+            System.err.println("카카오 응답 바디가 null임. 이메일 조회 실패");
+            return null; // 여기서 null 반환
+        }
+
         try {
             JsonNode json = objectMapper.readTree(response.getBody());
             JsonNode account = json.get("kakao_account");
             if (account == null || !account.has("email")) {
-                throw new IllegalStateException("카카오 계정 정보에 email 없음: " + response.getBody());
+                System.err.println("카카오 계정 정보에 email 없음: " + response.getBody());
+                return null; // 여기도 null 반환
             }
             return account.get("email").asText();
         } catch (Exception e) {
-            throw new IllegalStateException("카카오 사용자 정보 파싱 실패", e);
+            System.err.println("카카오 사용자 정보 파싱 실패: " + e.getMessage());
+            return null; // 파싱 실패 시도 여기서도 null
         }
     }
 
