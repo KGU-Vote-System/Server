@@ -29,11 +29,11 @@ public class KakaoAuthController {
         return ResponseEntity.ok("받은 인가 코드: " + code);
     }
 
-//    @Operation(summary = "카카오 리디렉트 처리용 GET", description = "카카오가 리디렉트해주는 code를 GET으로 받아 로그인 처리")
-//    @GetMapping("/kakao")
-//    public ResponseEntity<KakaoLoginResponse> kakaoRedirectLogin(@RequestParam("code") String code) {
-//        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(code));
-//    }
+    @Operation(summary = "카카오 리디렉트 처리용 GET", description = "카카오가 리디렉트해주는 code를 GET으로 받아 로그인 처리")
+    @GetMapping("/kakao")
+    public ResponseEntity<KakaoLoginResponse> kakaoRedirectLogin(@RequestParam("code") String code) {
+        return ResponseEntity.ok(kakaoAuthService.handleKakaoLogin(code));
+    }
 
     @Operation(summary = "회원가입", description = "카카오 이메일 + 사용자 정보 입력 후 최종 회원가입 -> ★★★★★★★★이거 쓰면 됨")
     @PostMapping("/kakao/signup")
