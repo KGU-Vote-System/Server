@@ -39,6 +39,16 @@ public class KakaoAuthService {
     @Value("${kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
+    @PostConstruct
+    private void init() {
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) throws IOException {
+                return false; // let caller inspect all responses
+            }
+        });
+    }
+
 
     @Transactional
     public KakaoLoginResponse handleKakaoLogin(String code) {
@@ -106,6 +116,10 @@ public class KakaoAuthService {
 
         System.out.println("카카오 응답 상태: " + response.getStatusCode());
         System.out.println("카카오 응답 바디: " + response.getBody());
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new IllegalStateException("카카오 토큰 요청 실패: " + response.getStatusCode());
+        }
 
         try {
             JsonNode json = objectMapper.readTree(response.getBody());
