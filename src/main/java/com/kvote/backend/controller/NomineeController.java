@@ -33,9 +33,9 @@ public class NomineeController {
     }
 
     @GetMapping("/{candidateId}/all")
-    public ApiResponse<List<NomineeResponseDto>> getAllNominees(@PathVariable Long candidateId,
+    public ApiResponse<NomineeResponseDto> getAllNominees(@PathVariable Long candidateId,
                                                                 @AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<NomineeResponseDto>>(nomineeService.getAllNominees(user.getUser(), candidateId));
+        return new ApiResponse<>(nomineeService.getAllNominees(user.getUser(), candidateId));
     }
 
     @PutMapping("/{nomineeId}")

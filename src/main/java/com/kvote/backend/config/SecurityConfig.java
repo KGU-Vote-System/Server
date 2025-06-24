@@ -1,6 +1,5 @@
 package com.kvote.backend.config;
 
-import com.google.cloud.storage.HttpMethod;
 import com.kvote.backend.auth.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,18 +29,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(String.valueOf(HttpMethod.OPTIONS), "/**").permitAll() // 💥 이 줄 반드시 필요
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/swagger-ui/**",
-                                "/swagger-resources/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/webjars/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // 🔥 전체 허용
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 🔥 이 줄 추가 ㅋㅋㅋ
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -49,13 +39,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
+
+        configuration.setAllowedOrigins(List.of(
                 "http://localhost:8080",
-                "https://took-five.vercel.app",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://took-five.vercel.app/"
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.addExposedHeader("Authorization");
         configuration.setAllowCredentials(true);
 

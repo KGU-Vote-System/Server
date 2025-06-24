@@ -49,8 +49,8 @@ public class VoteAuditLogController {
 
     @GetMapping("/all")
     @Operation(summary = "Get all vote audit logs")
-    public ApiResponse<List<VoteAuditLogResponseDto>> getAllVoteAuditLogs(@AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<VoteAuditLogResponseDto>>(voteAuditLogService.getAllVoteAuditLogs(user.getUser()));
+    public ApiResponse<VoteAuditLogResponseDto> getAllVoteAuditLogs(@AuthenticationPrincipal UserDetailsImpl user) {
+        return new ApiResponse<>(voteAuditLogService.getAllVoteAuditLogs(user.getUser()));
     }
 
 //    @GetMapping("/test")

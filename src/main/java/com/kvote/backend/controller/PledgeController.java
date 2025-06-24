@@ -33,9 +33,9 @@ public class PledgeController {
     }
 
     @GetMapping("/{candidateId}/all")
-    public ApiResponse<List<PledgeResponseDto>> getAllPledges(@PathVariable Long candidateId,
+    public ApiResponse<PledgeResponseDto> getAllPledges(@PathVariable Long candidateId,
                                                               @AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<PledgeResponseDto>>(pledgeService.getAllPledges(user.getUser(), candidateId));
+        return new ApiResponse<>(pledgeService.getAllPledges(user.getUser(), candidateId));
     }
 
     @PutMapping("/{pledgeId}")

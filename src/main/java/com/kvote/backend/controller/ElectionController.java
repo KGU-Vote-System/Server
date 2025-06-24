@@ -42,8 +42,8 @@ public class ElectionController {
 
     @GetMapping("/all")
     @Operation(summary = "Get all elections")
-    public ApiResponse<List<ElectionResponseDto>> getAllElections(@AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<ElectionResponseDto>>(electionService.getAllElections(user.getUser()));
+    public ApiResponse<ElectionResponseDto> getAllElections(@AuthenticationPrincipal UserDetailsImpl user) {
+        return new ApiResponse<>(electionService.getAllElections(user.getUser()));
     }
 
     @GetMapping("/{electionId}/total-vote-count")
@@ -55,9 +55,9 @@ public class ElectionController {
 
     @GetMapping("/year/{year}")
     @Operation(summary = "Get elections by year")
-    public ApiResponse<List<ElectionResponseDto>> getElectionsByYear(@PathVariable int year,
+    public ApiResponse<ElectionResponseDto> getElectionsByYear(@PathVariable int year,
                                                                       @AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<ElectionResponseDto>>(electionService.getElectionsByYear(year, user.getUser()));
+        return new ApiResponse<ElectionResponseDto>(electionService.getElectionsByYear(year, user.getUser()));
     }
 
     @PostMapping("/{electionId}/start")

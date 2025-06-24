@@ -24,9 +24,9 @@ public class CandidateController {
 
     @GetMapping("/all/{electionId}")
     @Operation(summary = "Get candidates by election ID")
-    public ApiResponse<List<CandidateResponseDto>> getCandidatesByElection(@PathVariable Long electionId,
+    public ApiResponse<CandidateResponseDto> getCandidatesByElection(@PathVariable Long electionId,
                                                                            @AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<CandidateResponseDto>>(candidateService.getCandidatesByElection(electionId));
+        return new ApiResponse<>(candidateService.getCandidatesByElection(electionId));
     }
 
     @GetMapping("/{candidateId}")
@@ -64,9 +64,9 @@ public class CandidateController {
 
     @GetMapping("/{electionId}/result")
     @Operation(summary = "Get election results by election ID")
-    public ApiResponse<List<CandidateResultsDto>> getElectionResults(@PathVariable Long electionId,
+    public ApiResponse<CandidateResultsDto> getElectionResults(@PathVariable Long electionId,
                                                                      @AuthenticationPrincipal UserDetailsImpl user) {
-        return new ApiResponse<List<CandidateResultsDto>>(candidateService.getElectionResults(electionId));
+        return new ApiResponse<>(candidateService.getElectionResults(electionId));
     }
 
 }
