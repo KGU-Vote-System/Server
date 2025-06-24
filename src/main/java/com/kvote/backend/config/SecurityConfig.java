@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 💥 이 줄 반드시 필요
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/swagger-ui/**",
@@ -39,7 +40,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 🔥 이 줄 추가
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 🔥 이 줄 추가 ㅋㅋㅋ
 
         return http.build();
     }
