@@ -56,6 +56,7 @@ public class CandidateService {
                 .toList();
     }
 
+    @Transactional
     public CandidateResponseDto addCandidate(CandidateRequestDto dto, User owner) throws Exception {
         electionService.isAdmin(owner);
         Election election = electionRepository.findById(dto.getElectionId())
@@ -102,6 +103,7 @@ public class CandidateService {
                 .build();
     }
 
+    @Transactional
     public CandidateResponseDto updateCandidate(Long candidateId, CandidateRequestDto dto, User user) {
         electionService.isAdmin(user);
         Election election = electionRepository.findById(dto.getElectionId())
@@ -122,6 +124,7 @@ public class CandidateService {
                 .build();
     }
 
+    @Transactional
     public void deleteCandidate(Long candidateId, User user) {
         electionService.isAdmin(user);
         Candidate candidate = candidateRepository.findById(candidateId)

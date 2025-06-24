@@ -20,7 +20,7 @@ public class NomineeController {
     private final NomineeService nomineeService;
 
     @PostMapping("/{candidateId}")
-    public ApiResponse<NomineeResponseDto> createNominee(NomineeRequestDto nomineeRequestDto,
+    public ApiResponse<NomineeResponseDto> createNominee(@RequestBody NomineeRequestDto nomineeRequestDto,
                                                          @PathVariable Long candidateId,
                                                          @AuthenticationPrincipal UserDetailsImpl user) {
         return new ApiResponse<>(nomineeService.createNominee(nomineeRequestDto, candidateId, user.getUser()));

@@ -7,8 +7,6 @@ import com.kvote.backend.dto.NomineeRequestDto;
 import com.kvote.backend.dto.NomineeResponseDto;
 import com.kvote.backend.global.exception.CheckmateException;
 import com.kvote.backend.global.exception.ErrorCode;
-import com.kvote.backend.global.response.ApiResponse;
-import com.kvote.backend.global.response.SuccessCode;
 import com.kvote.backend.repository.CandidateRepository;
 import com.kvote.backend.repository.NomineeRepository;
 import jakarta.transaction.Transactional;
@@ -30,10 +28,11 @@ public class NomineeService {
     public NomineeResponseDto createNominee(NomineeRequestDto nomineeRequestDto, Long candidateId, User user) {
         electionService.isAdmin(user);
 
-        if (nomineeRequestDto.isMain() && nomineeRepository.findMainNomineeByCandidateId(candidateId) != null) {
+        Optional<Nominee> existingMainNominee = Optional.ofNullable(nomineeRepository.findNomineeByCandidateId(candidateId));
+        if (nomineeRequestDto.isMain() && existingMainNominee.isPresent() && existingMainNominee.get().isMain()) {
             throw CheckmateException.from(ErrorCode.MAIN_NOMINEE_ALREADY_EXISTS);
         }
-        if (!nomineeRequestDto.isMain() && nomineeRepository.findSubNomineeByCandidateId(candidateId) != null) {
+        if (!nomineeRequestDto.isMain() && existingMainNominee.isPresent() && !existingMainNominee.get().isMain()) {
             throw CheckmateException.from(ErrorCode.SUB_NOMINEE_ALREADY_EXISTS);
         }
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -67,6 +66,7 @@ public class NomineeService {
                 .build();
     }
 
+    @Transactional
     public NomineeResponseDto updateNominee(Long nomineeId, NomineeRequestDto nomineeRequestDto, User user) {
         electionService.isAdmin(user);
         Nominee nominee = nomineeRepository.findById(nomineeId)
@@ -83,7 +83,8 @@ public class NomineeService {
                 .isMain(nominee.isMain())
                 .build();
     }
-    
+
+    @Transactional
     public void deleteNominee(Long nomineeId, User user) {
         electionService.isAdmin(user);
         Nominee nominee = nomineeRepository.findById(nomineeId)

@@ -114,6 +114,7 @@ public class ElectionService {
         return electionToDto(election);
     }
 
+    @Transactional
     public void startElection(BigInteger electionId, User user) {
         isAdmin(user);
         Election election = isElectionActive(electionId);
@@ -129,6 +130,7 @@ public class ElectionService {
         electionRepository.save(election);
     }
 
+    @Transactional
     public void endElection(BigInteger electionId, User user) throws Exception {
         isAdmin(user);
         Election election= electionRepository.findById(electionId.longValue())
@@ -150,6 +152,7 @@ public class ElectionService {
         return responseDtos;
     }
 
+    @Transactional
     public ElectionResponseDto updateElection(Long electionId, ElectionRequestDto dto, User user) {
         isAdmin(user);
         Election election = isElectionActive(BigInteger.valueOf(electionId));
@@ -184,6 +187,7 @@ public class ElectionService {
         electionRepository.delete(election);
     }
 
+    @Transactional
     public void scheduleEndElection() {
         // 현재 시간 기준으로 선거 종료 스케줄링
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);

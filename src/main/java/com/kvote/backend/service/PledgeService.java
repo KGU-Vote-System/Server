@@ -10,6 +10,7 @@ import com.kvote.backend.global.exception.ErrorCode;
 import com.kvote.backend.global.response.SuccessCode;
 import com.kvote.backend.repository.CandidateRepository;
 import com.kvote.backend.repository.PledgeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class PledgeService {
     private final ElectionService electionService;
     private final CandidateRepository candidateRepository;
 
+    @Transactional
     public List<PledgeResponseDto> createPledge(List<PledgeRequestDto> pledgeRequestDto, Long candidateId, User user) {
         electionService.isAdmin(user);
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -45,6 +47,7 @@ public class PledgeService {
         return PledgeResponseDto.from(pledge);
     }
 
+    @Transactional
     public PledgeResponseDto updatePledge(Long pledgeId, PledgeRequestDto pledgeRequestDto, User user) {
         electionService.isAdmin(user);
         Pledge pledge = pledgeRepository.findById(pledgeId)
@@ -57,6 +60,7 @@ public class PledgeService {
         return PledgeResponseDto.from(pledge);
     }
 
+    @Transactional
     public void deletePledge(Long pledgeId, User user) {
         electionService.isAdmin(user);
         Pledge pledge = pledgeRepository.findById(pledgeId)
