@@ -1,5 +1,6 @@
 package com.kvote.backend.config;
 
+import com.google.cloud.storage.HttpMethod;
 import com.kvote.backend.auth.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 💥 이 줄 반드시 필요
+                        .requestMatchers(String.valueOf(HttpMethod.OPTIONS), "/**").permitAll() // 💥 이 줄 반드시 필요
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/swagger-ui/**",
