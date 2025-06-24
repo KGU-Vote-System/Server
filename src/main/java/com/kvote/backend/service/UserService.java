@@ -1,6 +1,7 @@
 package com.kvote.backend.service;
 
 import com.kvote.backend.domain.User;
+import com.kvote.backend.dto.UserResponseDto;
 import com.kvote.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,5 +25,19 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 유저를 찾을 수 없습니다."));
         user.setRefreshToken(null);
         userRepository.save(user);
+    }
+
+    public UserResponseDto getUserInfo(User user) {
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .collegeMajorName(user.getCollegeMajorName())
+                .kakaoEmail(user.getKakaoEmail())
+                .refreshToken(user.getRefreshToken())
+                .role(user.getRole())
+                .studentVerified(user.isStudentVerified())
+                .studentEmail(user.getStudentEmail())
+                .walletAddress(user.getWalletAddress())
+                .build();
     }
 }
