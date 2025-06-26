@@ -27,8 +27,9 @@ public class User {
 
     /*그 뭐시기 그 대학 전공 이름 -> 부전공도 있어야 하나 ? // 그리고 이걸 개별 String으로 받을지 아니면 좀 노가다로 경기대학교 학과를 전체 List업해서 넣을지 고민중*/
     @NotBlank
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String collegeMajorName;
+    private CollegeMajor collegeMajorName;
 
     /** 카카오 로그인용 이메일 */
     @NotBlank

@@ -32,8 +32,9 @@ public class Election {
     @Column(nullable = false)
     private Campus campus;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 66, nullable = false)
-    private String collageMajorName;
+    private CollegeMajor collageMajorName;
 
     @Column(nullable = false)
     private String txHash;

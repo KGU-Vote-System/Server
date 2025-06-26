@@ -1,6 +1,7 @@
 package com.kvote.backend.dto;
 
 import com.kvote.backend.domain.Campus;
+import com.kvote.backend.domain.CollegeMajor;
 import com.kvote.backend.domain.Election;
 import com.kvote.backend.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,8 +34,8 @@ public class ElectionRequestDto {
     @Schema(description = "선거 활성 여부", example = "true")
     private boolean isActive; // 선거 활성화 상태, 기본값은 true
 
-    @Schema(description = "선거 대상 학과 이름", example = "소프트웨어경영대학")
-    private String collageMajorName; // 선거 대상 학과 이름, 선택적 필드
+    @Schema(description = "선거 대상 학과 이름", example = "COMPUTER_ENGINEERING")
+    private CollegeMajor collageMajorName; // 선거 대상 학과 이름, 선택적 필드
 
     public Election toEntity(BigInteger electionId, String txHash, User owner) {
         return Election.builder()

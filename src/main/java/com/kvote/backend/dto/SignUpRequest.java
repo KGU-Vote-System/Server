@@ -1,5 +1,6 @@
 package com.kvote.backend.dto;
 
+import com.kvote.backend.domain.CollegeMajor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class SignUpRequest {
     private String name;
 
     @Schema(description = "전공명", example = "컴퓨터공학과")
-    private String collegeMajorName;
+    private CollegeMajor collegeMajorName;
 
     @Schema(description = "학교 이메일", example = "student@kyonggi.ac.kr")
     private String studentEmail;

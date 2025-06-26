@@ -1,6 +1,7 @@
 package com.kvote.backend.dto;
 
 import com.kvote.backend.domain.Campus;
+import com.kvote.backend.domain.CollegeMajor;
 import com.kvote.backend.domain.Election;
 import lombok.*;
 
@@ -21,7 +22,7 @@ public class ElectionResponseDto {
     private Boolean isActive;
     private Campus campus;
     private Long ownerId;
-    private String collageMajorName;
+    private CollegeMajor collageMajorName;
 
     public static ElectionResponseDto from(Election election) {
         return ElectionResponseDto.builder()

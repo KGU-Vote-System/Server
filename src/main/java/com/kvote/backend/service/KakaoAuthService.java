@@ -118,8 +118,6 @@ public class KakaoAuthService {
         HttpEntity<String> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
-        System.out.println("카카오 응답 상태: " + response.getStatusCode());
-        System.out.println("카카오 응답 바디: " + response.getBody());
 
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new IllegalStateException("카카오 토큰 요청 실패: " + response.getStatusCode());
@@ -192,8 +190,6 @@ public class KakaoAuthService {
         HttpEntity<String> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
-        System.out.println("DEBUG용 응답 상태: " + response.getStatusCode());
-        System.out.println("DEBUG용 응답 바디: " + response.getBody());
 
         try {
             JsonNode json = objectMapper.readTree(response.getBody());

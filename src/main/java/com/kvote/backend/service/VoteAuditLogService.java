@@ -3,6 +3,7 @@ package com.kvote.backend.service;
 import com.kvote.backend.contract.ElectionManager;
 import com.kvote.backend.domain.Election;
 import com.kvote.backend.domain.User;
+import com.kvote.backend.domain.CollegeMajor;
 import com.kvote.backend.domain.VoteAuditLog;
 import com.kvote.backend.dto.VoteAuditLogResponseDto;
 import com.kvote.backend.dto.VoteTxRequestDto;
@@ -143,10 +144,12 @@ public class VoteAuditLogService {
         if (election.getEndAt().before(new Date()) || election.getStartAt().after(new Date())) {
             throw CheckmateException.from(ErrorCode.ELECTION_NOT_ACTIVE_OR_DELETED, "해당 선거는 현재 투표할 수 없는 상태입니다.");
         }
-//        // 캠퍼스 불일치
-//        if (election.getCampus() == null || !election.getCollageMajorName().equals(user.getCollegeMajorName())) {
-//            throw CheckmateException.from(ErrorCode.UNAUTHORIZED, "해당 선거에 투표할 권한이 없습니다.");
-//        }
+
+        // 학과 제한 확인 - ALL이 아니고 사용자의 학과와 다르면 권한 없음
+        if (election.getCollageMajorName() != CollegeMajor.ALL &&
+                !election.getCollageMajorName().equals(user.getCollegeMajorName())) {
+            throw CheckmateException.from(ErrorCode.UNAUTHORIZED, "해당 선거에 투표할 권한이 없습니다.");
+        }
 
         try {
             TransactionReceipt receipt = electionManager
