@@ -9,6 +9,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter @Setter
@@ -25,8 +26,8 @@ public class ElectionDraft {
     private String title;
     private String description;
 
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
+    private Date startAt;
+    private Date endAt;
 
     @Enumerated(EnumType.STRING)
     private Campus campus;
