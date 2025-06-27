@@ -22,7 +22,7 @@ public interface ElectionRepository extends JpaRepository<Election, Long> {
     //종료된 선거 목록을 조회하는 메서드
     List<Election> findByIsActiveFalse();
 
-    List<Election> findByIsActiveTrueAndStartAtAfter(LocalDateTime now);
+    List<Election> findByIsActiveTrueAndStartAtAfter(Date startAt);
 
-    List<Election> findByIsActiveTrueAndStartAtBefore(LocalDateTime now);
+    List<Election> findByIsActiveTrueAndStartAtBefore(Date startAt);
 }

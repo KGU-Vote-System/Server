@@ -232,13 +232,13 @@ public class ElectionService {
                 .collect(Collectors.toList());
     }
     public List<ElectionResponseDto> getUpcomingElections() {
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        Date now = Date.from(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC));
         List<Election> elections = electionRepository.findByIsActiveTrueAndStartAtAfter(now);
         return elections.stream().map(ElectionResponseDto::from).collect(Collectors.toList());
     }
 
     public List<ElectionResponseDto> getOngoingElections() {
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        Date now = Date.from(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC));
         List<Election> elections = electionRepository.findByIsActiveTrueAndStartAtBefore(now);
         return elections.stream().map(ElectionResponseDto::from).collect(Collectors.toList());
     }
